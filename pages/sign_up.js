@@ -231,9 +231,20 @@ class SignUp extends React.Component {
     });
     auth.createUserWithEmailAndPassword(this.state.clientEmail, this.state.clientPassword)
     .then((firebaseUser) => {
-      let initialUserDoc = { email: this.state.email };
+      let initialUserDoc = {
+        email: this.state.email
+      };
       let initialUserDocStringify = JSON.stringify(initialUserDoc);
-      db.collection("teachers").doc(firebaseUser.user.uid).set({initialUserDocStringify}).then(() =>{
+      let userDataCollection = {
+        "uid": firebaseUser.user.uid,
+        "displayName": firebaseUser.user.displayName,
+        "photoURL": firebaseUser.user.photoURL,
+        "email": firebaseUser.user.email,
+        "emailVerified": firebaseUser.user.emailVerified,
+        "isNewUser": firebaseUser.additionalUserInfo.isNewUser,
+        "userType": "teacher"
+      }
+      db.collection("users").doc(firebaseUser.user.uid).set(userDataCollection).then(() =>{
         Router.push('/dashboard');
       }).catch((error) =>{
         console.log(error);

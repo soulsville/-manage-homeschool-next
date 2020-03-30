@@ -37,6 +37,8 @@ const withAuth = (Component) => {
         return <h1>Loading ......</h1>;
       } else if (status == 'SIGNED_IN') {
         return <Component { ...this.props } authUser={authUser}/>
+      }  else {
+        return <h1>In this state now...</h1>
       }
     }
 
