@@ -1,7 +1,7 @@
 import React from 'react';
 import withAuth from '../src/helpers/withAuth';
 import ErrorPage from 'next/error'
-import { db } from "../src/firebase";
+import { db, storage } from "../src/firebase";
 
 
 class TeacherInterview extends React.Component {
@@ -30,11 +30,12 @@ class TeacherInterview extends React.Component {
             }],
             homeSchoolName: "",
             teacherProfilePicFile: '',
+            teacherProfilePicBlob: '',
             teacherName: '',
             teacherDataCollection: {
                 "uid": "",
                 "displayName": "",
-                "photoURL": "",
+                "photoUrl": "",
                 "email": "",
                 "emailVerified": "",
                 "isNewUser": "",
@@ -49,7 +50,7 @@ class TeacherInterview extends React.Component {
             validationHomeSchoolName: {
                 message: null,
             },
-            isLoadingSubmit: true,
+            isLoadingSubmit: false,
         }
     }
 
@@ -63,7 +64,7 @@ class TeacherInterview extends React.Component {
             docRef.get().then((doc) => {
                 if (doc.exists) {
                     // check if the users uid isNewUser
-                    console.log("Document data:", doc.data());
+                    console.log("User Document data:", doc.data());
                     if (doc.data().userType !== "teacher") {
                         currentComponent.setState({
                             teacherType: false,
@@ -113,20 +114,18 @@ class TeacherInterview extends React.Component {
                 case 2:
                     return (
                         <div>
-                            <form>
-                                <p>{this.state.questionTwo}</p>
-                                <input type="file" name="myImage" onChange={() => this.handleImageUpload}/>
-                                <button
-                                    content='Back'
-                                    onClick={() => this.handleBackClick(event)}>
-                                    Back
-                                </button>
-                                <button
-                                    content='Next'
-                                    onClick={() => this.handleYesClick(event)}>
-                                    Next
-                                </button>
-                            </form>
+                            <p>{this.state.questionTwo}</p>
+                            <input type="file" onChange={this.onImageChange} />
+                            <button
+                                content='Back'
+                                onClick={() => this.handleBackClick(event)}>
+                                Back
+                            </button>
+                            <button
+                                content='Next'
+                                onClick={() => this.handleYesClick(event)}>
+                                Next
+                            </button>
                         </div>
 
                     )
@@ -293,16 +292,53 @@ class TeacherInterview extends React.Component {
         }
     }
 
-    handleFirstTimeSetup(){
+    uploadProfileFile = () => {
+        const image = this.state.teacherProfilePicFile;
+        const uploadTask = storage.ref(`images/${image.name}`).put(image);
+        uploadTask.on(
+            "state_changed",
+            snapshot => {
+                // progress function ...
+                const progress = Math.round(
+                    (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                );
+                this.setState({ progress });
+            },
+            error => {
+                // Error function ...
+                console.log(error);
+            },
+            () => {
+                // complete function ...
+                storage
+                    .ref("images")
+                    .child(image.name)
+                    .getDownloadURL()
+                    .then(url => {
+                        this.setState({
+                            teacherDataCollection: {
+                                "photoUrl": url,
+                            }
+                        });
+                    });
+            }
+        );
+    }
 
+    handleFirstTimeSetup(){
+        this.setState({
+            "uid": this.state.authUser.uid,
+            "email": this.state.authUser.email,
+            "isNewUser": false,
+        });
     }
 
     handleSubmit = () => {
-        if(this.state.isLoadingSubmit){
+        if(this.state.isLoadingSubmit == false){
+            this.setState({
+               isLoadingSubmit: true,
+            });
             this.handleFirstTimeSetup();
-            return(
-                <div>Loading first time submission....</div>
-            )
         } else {
 
         }
@@ -330,9 +366,9 @@ class TeacherInterview extends React.Component {
         const target = e.target;
         const value = target.value;
         this.setState({
-            handleTeacherName: value,
+            teacherName: value,
         });
-        console.log(this.state.handleTeacherName);
+        console.log(this.state.teacherName);
     }
 
     handleHomeSchoolName = (e) => {
@@ -377,7 +413,39 @@ class TeacherInterview extends React.Component {
         }
     }
 
+    onImageChange = e => {
+        if (e.target.files[0]) {
+            const image = e.target.files[0];
+            this.setState(() => ({
+                teacherProfilePicFile: image,
+            }));
+        }
+        // let blob = new Blob([event.target.result], { type: "image/jpg" });
+        // this.setState({
+        //     teacherProfilePicBlob: blob,
+        // });
+
+        // if (event.target.files && event.target.files[0]) {
+        //     let reader = new FileReader();
+        //     reader.onload = (e) => {
+        //         this.setState({
+        //             teacherProfilePicFile: e.target.result,
+        //         });
+        //     }
+        // }
+    }
+
+    setRef = (ref) => {
+        console.log("in setREf");
+        this.setState({
+            teacherProfilePicFile: ref,
+        });
+        console.log(this.state.teacherProfilePicFile);
+    }
+
     handleImageUpload = (e) => {
+        console.log('in image handle upload');
+        console.log(e.target.files[0]);
         this.setState({
             teacherProfilePicFile: e.target.files[0]
         });
@@ -385,6 +453,9 @@ class TeacherInterview extends React.Component {
 
     handleYesClick(event) {
         event.preventDefault();
+        if(this.state.questionState == 2){
+            this.uploadProfileFile();
+        }
         if(this.state.questionState == 8){
             this.handleSubmit();
         } else {
