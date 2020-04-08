@@ -71,8 +71,8 @@ class Dashboard extends React.Component {
     const renderConditionalDashboard = () => {
       console.log("be here now")
       if(this.state.newTeacherUserFlow === true) {
-        console.log("i'm here man")
-        Router.push('/teacher_setup')
+        console.log("i'm here man");
+        Router.push('/teacher_setup');
       } else {
         return null
       }

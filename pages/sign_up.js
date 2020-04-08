@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import Nav from '../components/nav';
-import { auth, firebase, db } from '../src/firebase';
+import { auth, firebase, db, functions } from '../src/firebase';
 import Router from 'next/router';
 
 
@@ -244,8 +244,11 @@ class SignUp extends React.Component {
         "isNewUser": firebaseUser.additionalUserInfo.isNewUser,
         "userType": "teacher"
       }
-      db.collection("users").doc(firebaseUser.user.uid).set(userDataCollection).then(() =>{
-        Router.push('/dashboard');
+      db.collection("users").doc(firebaseUser.user.uid).set(userDataCollection).then(() => {
+        const addAdminRole = functions.httpsCallable('addAdminRole');
+        addAdminRole({ email: firebaseUser.user.email }).then(results => {
+          Router.push('/dashboard');
+        });
       }).catch((error) =>{
         console.log(error);
         this.setState({

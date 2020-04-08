@@ -1,8 +1,8 @@
 import React from 'react';
 import withAuth from '../src/helpers/withAuth';
 import ErrorPage from 'next/error'
-import { db, storage } from "../src/firebase";
-
+import { db, storage, functions } from "../src/firebase";
+import Router from 'next/router';
 
 class TeacherInterview extends React.Component {
     constructor(props) {
@@ -27,22 +27,32 @@ class TeacherInterview extends React.Component {
             teacherStudent: [{
                 email: "",
                 password: "",
+                validationPasswordError: {
+                    message: "",
+                },
+                validationEmailError: {
+                    message: "",
+                },
+                serverSideError: {
+                    message: "",
+                }
             }],
             homeSchoolName: "",
             teacherProfilePicFile: '',
             teacherProfilePicBlob: '',
-            teacherName: '',
+            teacherName: null,
+            teacherProfileFile: null,
             teacherDataCollection: {
-                "uid": "",
-                "displayName": "",
-                "photoUrl": "",
-                "email": "",
-                "emailVerified": "",
-                "isNewUser": "",
-                "userType": "teacher",
-                "teacherStudents": [],
-                "teacherName": "",
-                "homeschoolName": "",
+                uid: "",
+                displayName: "",
+                photoUrl: "",
+                email: "",
+                emailVerified: "",
+                isNewUser: "",
+                userType: "teacher",
+                teacherStudents: [],
+                teacherName: "",
+                homeschoolName: "",
             },
             validationTeacherName: {
                 message: null,
@@ -163,12 +173,12 @@ class TeacherInterview extends React.Component {
                             </form>
                             <button
                                 content='Back'
-                                onClick={() => this.handleBackClick}>
+                                onClick={() => this.handleBackClick(event)}>
                                 Back
                             </button>
                             <button
                                 content='Next'
-                                onClick={() => this.handleYesClick}>
+                                onClick={() => this.handleYesClick(event)}>
                                 Next
                             </button>
                         </div>
@@ -209,6 +219,7 @@ class TeacherInterview extends React.Component {
                                                     data-id={idx}
                                                     value={this.state.teacherStudent[idx].email}
                                                     className="email"
+                                                    onChange={this.state.handleStudentChange}
                                                 />
                                                 <label htmlFor={passwordId}>Password</label>
                                                 <input
@@ -233,12 +244,12 @@ class TeacherInterview extends React.Component {
                                 </button>
                                 <button
                                     content='Back'
-                                    onClick={() => this.handleBackClick}>
+                                    onClick={() => this.handleBackClick(event)}>
                                     Back
                                 </button>
                                 <button
                                     content='Next'
-                                    onClick={() => this.handleYesClick}>
+                                    onClick={() => this.handleYesClick(event)}>
                                     Next
                                 </button>
                             </form>
@@ -278,12 +289,12 @@ class TeacherInterview extends React.Component {
                             </form>
                             <button
                                 content='Back'
-                                onClick={() => this.handleBackClick}>
+                                onClick={() => this.handleBackClick(event)}>
                                 Back
                             </button>
                             <button
                                 content='Next'
-                                onClick={() => this.handleYesClick}>
+                                onClick={() => this.handleYesClick(event)}>
                                 Next
                             </button>
                         </div>
@@ -311,25 +322,68 @@ class TeacherInterview extends React.Component {
             () => {
                 // complete function ...
                 storage
-                    .ref("images")
-                    .child(image.name)
-                    .getDownloadURL()
-                    .then(url => {
-                        this.setState({
-                            teacherDataCollection: {
-                                "photoUrl": url,
-                            }
-                        });
+                .ref("images")
+                .child(image.name)
+                .getDownloadURL()
+                .then(url => {
+                    this.setState({
+                        teacherProfileFile: url
                     });
+                    // this.setState((prevState) => ({
+                    //     teacherStudent: [...prevState.teacherDataCollection.photoUrl: url]
+                    // }));
+                });
             }
         );
     }
 
     handleFirstTimeSetup(){
-        this.setState({
-            "uid": this.state.authUser.uid,
-            "email": this.state.authUser.email,
-            "isNewUser": false,
+        const addTeacherDocuments = functions.httpsCallable('addTeacherDocuments');
+        // uid: data.uid,
+        // displayName: data.displayName,
+        // photoUrl: data.photoURL,
+        // email: data.email,
+        // emailVerified: data.emailVerified,
+        // isNewUser: data.isNewUser,
+        // teacherStudents: data.teacherStudents,
+        // teacherName: data.teacherName,
+        // homeschoolName: data.homeschoolName,
+        
+        // uid: data.uid,
+        // displayName: data.displayName,
+        // photoUrl: data.photoURL,
+        // email: data.email,
+        // emailVerified: data.emailVerified,
+        // isNewUser: data.isNewUser,
+        // userType: "teacher",
+        // teacherStudents: data.teacherStudents,
+        // teacherName: data.teacherName,
+        // homeschoolName: data.homeschoolName,
+
+        console.log("uid" + this.state.authUser.uid)
+        console.log("displayName" + this.state.teacherName)
+        console.log("photoUrl" + this.state.teacherProfileFile)
+        console.log("email" + this.state.authUser.email)
+        console.log("emailVerified" + this.state.authUser.emailVerified)
+        console.log("teacherStudents" + this.state.teacherDataCollection.teacherStudents)
+        console.log("teacherName" + this.state.teacherName)
+        console.log("homeSchoolName" + this.state.homeSchoolName)
+
+        addTeacherDocuments({
+            uid: this.state.authUser.uid,
+            displayName: this.state.teacherName,
+            photoUrl: this.state.teacherProfileFile,
+            email: this.state.authUser.email, 
+            emailVerified: this.state.authUser.emailVerified,
+            isNewUser: false,
+            teacherStudents: this.state.teacherDataCollection.teacherStudents,
+            teacherName: this.state.teacherName,
+            homeSchoolName: this.state.homeSchoolName
+        }).then(results => {
+            console.log(results);
+            Router.push('/dashboard');
+        }).catch(err => {
+            console.log(err);
         });
     }
 
@@ -358,7 +412,7 @@ class TeacherInterview extends React.Component {
         e.preventDefault();
         this.setState((prevState) => ({
             teacherStudent: [...prevState.teacherStudent, {email: "", password: ""}]
-        }))
+        }));
     }
 
     handleTeacherName = (e) => {
@@ -420,27 +474,6 @@ class TeacherInterview extends React.Component {
                 teacherProfilePicFile: image,
             }));
         }
-        // let blob = new Blob([event.target.result], { type: "image/jpg" });
-        // this.setState({
-        //     teacherProfilePicBlob: blob,
-        // });
-
-        // if (event.target.files && event.target.files[0]) {
-        //     let reader = new FileReader();
-        //     reader.onload = (e) => {
-        //         this.setState({
-        //             teacherProfilePicFile: e.target.result,
-        //         });
-        //     }
-        // }
-    }
-
-    setRef = (ref) => {
-        console.log("in setREf");
-        this.setState({
-            teacherProfilePicFile: ref,
-        });
-        console.log(this.state.teacherProfilePicFile);
     }
 
     handleImageUpload = (e) => {
@@ -451,10 +484,47 @@ class TeacherInterview extends React.Component {
         });
     }
 
+    handleStudentSignUp = (email, password, uid) => {
+        const addUserAsAdmin = functions.httpsCallable('addUserAsAdmin');
+        addUserAsAdmin({ email: email, password: password, uid: uid }).then(results => {
+            console.log("results from api:" + JSON.stringify(results.data.user.uid));
+            const teacherDataCollection = this.state.teacherDataCollection;
+            teacherDataCollection.teacherStudents.push(results.data.user.uid);
+            this.setState({
+                teacherDataCollection
+            });
+            return true
+        }).catch((error)=> {
+            console.log(error);
+            return false;
+        });
+    }
+
+    handleUserStudentsSignUp = () => {
+        let context = this;
+        const uid = this.state.authUser.uid;
+        this.state.teacherStudent.forEach(function (student, index) {
+            console.log(student.email);
+            console.log(student.password);
+            if(context.handleStudentSignUp(student.email, student.password, uid) == false) {
+                // let students = [this.]
+                this.setState(prevState => ({
+                    ...prevState.teacherStudent,
+                    [prevState.teacherStudent[index].serverSideError.message]: "Invalid Password or Email",
+                }));
+            }
+            console.log('teacherDataCollection:' + context.teacherDataCollection);
+        });
+    }
+
     handleYesClick(event) {
         event.preventDefault();
         if(this.state.questionState == 2){
             this.uploadProfileFile();
+        }
+        if(this.state.questionState == 6){
+            console.log("Made it to the questionState number #6");
+            this.handleUserStudentsSignUp();
         }
         if(this.state.questionState == 8){
             this.handleSubmit();
