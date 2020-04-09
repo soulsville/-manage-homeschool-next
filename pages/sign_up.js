@@ -246,7 +246,7 @@ class SignUp extends React.Component {
       }
       db.collection("users").doc(firebaseUser.user.uid).set(userDataCollection).then(() => {
         const addAdminRole = functions.httpsCallable('addAdminRole');
-        addAdminRole({ email: firebaseUser.user.email }).then(results => {
+        addAdminRole({ uid: firebaseUser.user.uid }).then(results => {
           Router.push('/dashboard');
         });
       }).catch((error) =>{
