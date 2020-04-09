@@ -16,7 +16,7 @@ class TeacherInterview extends React.Component {
             questionThree: "Do you want to add your full name?",
             questionFour: "What is your full name?",
             // Add students
-            questionFive: "Do you want to add students right now? You can always not add students or add them later if needed ",
+            questionFive: "Do you want to add students right now? You can always not add students or add them later if needed",
             questionSix: "Enter student emails and passwords, Note: This will be a temp password for students until they login",
             // School name
             questionSeven: "Do you want to add a name for you homeschool?",
@@ -25,8 +25,10 @@ class TeacherInterview extends React.Component {
             teacherType: false,
             firstTimeRender: true,
             teacherStudent: [{
+                uid: null,
                 email: "",
                 password: "",
+                fullName: "",
                 validationPasswordError: {
                     message: "",
                 },
@@ -36,6 +38,11 @@ class TeacherInterview extends React.Component {
                 serverSideError: {
                     message: "",
                 }
+            }],
+            teacherStudentTeacherDocObject: [{
+                email: null,
+                uid: null,
+                fullName: null,
             }],
             homeSchoolName: "",
             teacherProfilePicFile: '',
@@ -50,7 +57,11 @@ class TeacherInterview extends React.Component {
                 emailVerified: "",
                 isNewUser: "",
                 userType: "teacher",
-                teacherStudents: [],
+                teacherStudents: [{
+                    email: null,
+                    uid: null,
+                    fullName: null,
+                }],
                 teacherName: "",
                 homeschoolName: "",
             },
@@ -207,7 +218,7 @@ class TeacherInterview extends React.Component {
                                 Add Students:<br/>
                                 {
                                     this.state.teacherStudent.map((val, idx) => {
-                                        let studentId = `student-${idx}`, passwordId = `password-${idx}`
+                                        let studentId = `student-${idx}`, passwordId = `password-${idx}`, fullNameId = `fullName-${idx}`
                                         return (
                                             <div key={idx}>
                                                 <label htmlFor={studentId}>{`Student #${idx + 1}`}</label>
@@ -230,6 +241,17 @@ class TeacherInterview extends React.Component {
                                                     data-id={idx}
                                                     value={this.state.teacherStudent[idx].password}
                                                     className="password"
+                                                    onChange={this.state.handleStudentChange}
+                                                />
+                                                <label htmlFor={fullNameId}>Student Full Name</label>
+                                                <input
+                                                    type="text"
+                                                    name={fullNameId}
+                                                    label="Student Full Name"
+                                                    id={fullNameId}
+                                                    data-id={idx}
+                                                    value={this.state.teacherStudent[idx].fullNameId}
+                                                    className="fullName"
                                                     onChange={this.state.handleStudentChange}
                                                 />
                                             </div>
@@ -365,7 +387,7 @@ class TeacherInterview extends React.Component {
         console.log("photoUrl" + this.state.teacherProfileFile)
         console.log("email" + this.state.authUser.email)
         console.log("emailVerified" + this.state.authUser.emailVerified)
-        console.log("teacherStudents" + this.state.teacherDataCollection.teacherStudents)
+        console.log("teacherStudentTeacherDocObject" + this.state.teacherStudentTeacherDocObject[0].email)
         console.log("teacherName" + this.state.teacherName)
         console.log("homeSchoolName" + this.state.homeSchoolName)
 
@@ -376,7 +398,7 @@ class TeacherInterview extends React.Component {
             email: this.state.authUser.email, 
             emailVerified: this.state.authUser.emailVerified,
             isNewUser: false,
-            teacherStudents: this.state.teacherDataCollection.teacherStudents,
+            teacherStudents: this.state.teacherStudentTeacherDocObject,
             teacherName: this.state.teacherName,
             homeSchoolName: this.state.homeSchoolName
         }).then(results => {
@@ -399,7 +421,7 @@ class TeacherInterview extends React.Component {
     }
 
     handleStudentChange = (e) => {
-        if (["email", "password"].includes(e.target.className)) {
+        if (["email", "password", "fullName"].includes(e.target.className)) {
             let teacherStudent = [...this.state.teacherStudent]
             teacherStudent[e.target.dataset.id][e.target.className] = e.target.value;
             this.setState({teacherStudent}, () => console.log(this.state.teacherStudent))
@@ -411,7 +433,7 @@ class TeacherInterview extends React.Component {
     handleAddMoreStudents = (e) => {
         e.preventDefault();
         this.setState((prevState) => ({
-            teacherStudent: [...prevState.teacherStudent, {email: "", password: ""}]
+            teacherStudent: [...prevState.teacherStudent, {email: "", password: "", fullName: ""}]
         }));
     }
 
@@ -484,15 +506,35 @@ class TeacherInterview extends React.Component {
         });
     }
 
-    handleStudentSignUp = (email, password, uid) => {
+    handleStudentSignUp = (email, password, fullName, uid, index) => {
         const addUserAsAdmin = functions.httpsCallable('addUserAsAdmin');
-        addUserAsAdmin({ email: email, password: password, uid: uid }).then(results => {
+        console.log("fullName check: " + fullName);
+        console.log("email check: " + email);
+        let teacherStudentTeacherDocObject = this.state.teacherStudentTeacherDocObject;
+        addUserAsAdmin({ email: email, password: password, displayName: fullName, uid: uid }).then(results => {
             console.log("results from api:" + JSON.stringify(results.data.user.uid));
-            const teacherDataCollection = this.state.teacherDataCollection;
-            teacherDataCollection.teacherStudents.push(results.data.user.uid);
+            // const teacherDataCollection = this.state.teacherDataCollection;
+            // teacherDataCollection.teacherStudents[index].email = email;
+            // teacherDataCollection.teacherStudents[index].uid = results.data.user.uid;
+            //teacherDataCollection.teacherStudents[index].fullName = fullName;
+            // const teacherStudentTeacherDocObject = this.state.teacherStudentTeacherDocObject;
+            teacherStudentTeacherDocObject[index].uid = results.data.user.uid;
+            teacherStudentTeacherDocObject[index].email = email;
+            teacherStudentTeacherDocObject[index].fullName = fullName;
+
             this.setState({
-                teacherDataCollection
+                teacherStudentTeacherDocObject
             });
+            // const teacherStudentObj = {
+            //     email: email,
+            //     uid: results.data.user.uid
+            // }
+            // teacherDataCollection.teacherStudents[index].uid = results.data.user.uid;
+            // teacherDataCollection.teacherStudents[index].email = email;
+            // this.setState(prevState => {
+            //     ...prevState,
+            //     teacherDataCollection.teacherStudents[index] = teacherDataCollection
+            // });
             return true
         }).catch((error)=> {
             console.log(error);
@@ -506,14 +548,14 @@ class TeacherInterview extends React.Component {
         this.state.teacherStudent.forEach(function (student, index) {
             console.log(student.email);
             console.log(student.password);
-            if(context.handleStudentSignUp(student.email, student.password, uid) == false) {
+            if(context.handleStudentSignUp(student.email, student.password, student.fullName, uid, index) == false) {
                 // let students = [this.]
                 this.setState(prevState => ({
                     ...prevState.teacherStudent,
                     [prevState.teacherStudent[index].serverSideError.message]: "Invalid Password or Email",
                 }));
             }
-            console.log('teacherDataCollection:' + context.teacherDataCollection);
+            // console.log('teacherStudent:' + this.state.teacherStudent);
         });
     }
 
