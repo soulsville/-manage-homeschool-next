@@ -3,6 +3,9 @@ import withAuth from '../src/helpers/withAuth';
 import ErrorPage from 'next/error'
 import { db, storage, functions } from "../src/firebase";
 import Router from 'next/router';
+import Nav from '../components/nav';
+import stylesheet from 'antd/dist/antd.min.css'
+
 
 export class TeacherDashboard extends React.Component {
     constructor(props) {
@@ -47,7 +50,10 @@ export class TeacherDashboard extends React.Component {
     render() {
         return (
             <React.Fragment>
+                            <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
+
                 <div>
+                    <Nav/>
                     <p>Things are happenings</p>
                 </div>
             </React.Fragment>
