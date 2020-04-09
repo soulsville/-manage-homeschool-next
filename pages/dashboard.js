@@ -3,7 +3,7 @@ import React from 'react';
 import withAuth from '../src/helpers/withAuth';
 import { db } from '../src/firebase';
 import Router from 'next/router';
-
+import { TeacherDashboard } from '../components/teacherDashboard';
 
 
 class Dashboard extends React.Component {
@@ -36,6 +36,8 @@ class Dashboard extends React.Component {
             currentComponent.setState({
               newTeacherUserFlow: true,
             });
+          } else if(doc.data().userType == "teacher"){
+            currentComponent.setState({teacherDashboard: true})
           }
         } else {
           console.log("No such document!");
@@ -46,35 +48,17 @@ class Dashboard extends React.Component {
     }
   }
 
-  // shouldComponentUpdate() {
-  //   let docRef = db.collection("users").doc(this.state.authUser.uid);
-  //   docRef.get().then((doc) => {
-  //     if(doc.exists) {
-  //       // check if the users uid isNewUser
-  //       console.log("Document data:", doc.data());
-  //       if(doc.data().isNewUser && doc.data().userType === "teacher") {
-  //         console.log("newTeacherUserFlow interview questions");
-  //         this.setState({
-  //           newTeacherUserFlow: true,
-  //         });
-  //       }
-  //     } else {
-  //       console.log("No such document!");
-  //     }
-  //   }).catch(function(error) {
-  //     console.log("Error getting document:", error);
-  //   });
-  // }
-
-
   render() {
     const renderConditionalDashboard = () => {
       console.log("be here now")
       if(this.state.newTeacherUserFlow === true) {
         console.log("i'm here man");
         Router.push('/teacher_setup');
+      } else if(this.state.teacherDashboard == true) {
+        console.log("made it to teacher dashboard conditional");
+        return <TeacherDashboard authUser={this.state.authUser} />
       } else {
-        return null
+        return <p>Nothing implemented for these conditions yet...</p>
       }
     }
 
