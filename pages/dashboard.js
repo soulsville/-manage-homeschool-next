@@ -11,6 +11,7 @@ class Dashboard extends React.Component {
     super(props);
     this.state = {
       authUser: this.props.authUser,
+      currentUserDoc: null,
       newTeacherUserFlow: false,
       loading: true,
       studentDashboard: false,
@@ -37,7 +38,8 @@ class Dashboard extends React.Component {
               newTeacherUserFlow: true,
             });
           } else if(doc.data().userType == "teacher"){
-            currentComponent.setState({teacherDashboard: true})
+            // TODO: get the teacher doc here instad of the users doc
+            currentComponent.setState({teacherDashboard: true, currentUserDoc: doc.data()})
           }
         } else {
           console.log("No such document!");
@@ -56,7 +58,7 @@ class Dashboard extends React.Component {
         Router.push('/teacher_setup');
       } else if(this.state.teacherDashboard == true) {
         console.log("made it to teacher dashboard conditional");
-        return <TeacherDashboard authUser={this.state.authUser} />
+        return <TeacherDashboard authUser={this.state.authUser} currentUserDoc={this.state.currentUserDoc} />
       } else {
         return <p>Nothing implemented for these conditions yet...</p>
       }

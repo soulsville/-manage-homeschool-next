@@ -4,20 +4,23 @@ import ErrorPage from 'next/error'
 import { db, storage, functions } from "../src/firebase";
 import Router from 'next/router';
 import Nav from '../components/nav';
-import stylesheet from 'antd/dist/antd.min.css'
+import stylesheet from 'antd/dist/antd.min.css';
 
 
 export class TeacherDashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentUser: this.props.authUser
+            currentUser: this.props.authUser,
+            currentUserDoc: this.props.currentUserDoc,
+            currentUserClicked: this.props.currentUserDoc,
         }
+        this.handleMenuClick = this.handleMenuClick.bind(this);
     }
 
     componentDidMount() {
         console.log("in teacher dashboard class....");
-        console.log(this.state.currentUser);
+        console.log(this.state.currentUserDoc);
         // here check if the user is actually an teacher again
         // if not throw a 404
         // if (this.state.authUser !== null) {
@@ -47,14 +50,31 @@ export class TeacherDashboard extends React.Component {
         // }
     }
 
+    handleMenuClick = (index) => {
+        console.log('index:' + parseInt(index));
+        if(parseInt(index) === -1){
+            this.setState({
+                currentUserClicked: this.state.currentUserDoc,
+            });
+        } else {
+            let userClicked = this.state.currentUserDoc.teacherStudents[index];
+            console.log("teacherStudents: " + JSON.stringify(this.state.currentUserDoc.teacherStudents[index]))
+            this.setState({
+                currentUserClicked: userClicked,
+            });
+        }
+    }
+    
     render() {
         return (
             <React.Fragment>
-                            <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
-
+                <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
                 <div>
-                    <Nav/>
-                    <p>Things are happenings</p>
+                    <Nav 
+                        currentUserDoc={this.state.currentUserDoc}
+                        currentUserClicked={this.state.currentUserClicked}
+                        handleMenuClick={this.handleMenuClick}
+                    />
                 </div>
             </React.Fragment>
         );
