@@ -14,40 +14,91 @@ export class TeacherDashboard extends React.Component {
             currentUser: this.props.authUser,
             currentUserDoc: this.props.currentUserDoc,
             currentUserClicked: this.props.currentUserDoc,
+            studentClicked: false,
+            attendanceOptionClicked: false,
+            attendanceComponent: {
+                clientSideValidationErrors:{
+                    rangePickerAttendanceValidationError: null,
+                    studentAttendanceReasonsValidationError: null,
+                    noStudentSelectedValidationError: null,
+                },
+                studentAttendanceOtherReasonShow: false,
+                studentAttendanceSickReasonChosen: false,
+                studentAttedanceNotAttendingReason: null,
+                allStdentAttendanceTheSame: false,
+                studentAttendanceDateRangeString: null,
+                notAttendingSubmitButtonLoading: false,
+            }
         }
         this.handleMenuClick = this.handleMenuClick.bind(this);
+        this.studentAttendanceSubmitClicked = this.studentAttendanceSubmitClicked.bind(this);
+        this.studentAttendanceOtherReasonClicked = this.studentAttendanceOtherReasonClicked.bind(this);
+        this.studentAttendanceSickClicked = this.studentAttendanceSickClicked.bind(this);
+        this.handleStudentAttendanceOtherReasonInput = this.handleStudentAttendanceOtherReasonInput.bind(this);
+        this.markAllStudentAtendanceTheSame = this.markAllStudentAtendanceTheSame.bind(this);
+        this.handleStudentAttendanceDateRange = this.handleStudentAttendanceDateRange.bind(this);
     }
 
     componentDidMount() {
         console.log("in teacher dashboard class....");
         console.log(this.state.currentUserDoc);
-        // here check if the user is actually an teacher again
-        // if not throw a 404
-        // if (this.state.authUser !== null) {
-        //     let docRef = db.collection("users").doc(this.state.authUser.uid);
-        //     let currentComponent = this;
-        //     docRef.get().then((doc) => {
-        //         if (doc.exists) {
-        //             // check if the userType is teacher
-        //             console.log("User Document data:", doc.data());
-        //             if (doc.data().userType !== "teacher") {
-        //                 currentComponent.setState({
-        //                     teacherType: false,
-        //                     firstTimeRender: false,
-        //                 });
-        //             } else {
-        //                 currentComponent.setState({
-        //                     firstTimeRender: false,
-        //                     teacherType: true,
-        //                 });
-        //             }
-        //         } else {
-        //             console.log("No such document!");
-        //         }
-        //     }).catch((error) => {
-        //         console.log("Error getting document:", error);
-        //     });
-        // }
+    }
+
+    handleStudentAttendanceDateRange = (dates, dateStrings) => {
+        console.log("in date handleStudentAttendanceDateRange");
+        console.log("dateStrings: " + dateStrings);
+        if(dateStrings.toString().split(",")[0]){
+            this.setState(prevState => ({
+                attendanceComponent:{
+                    ...prevState.attendanceComponent,
+                    clientSideValidationErrors:{
+                        ...prevState.clientSideValidationErrors,
+                        rangePickerAttendanceValidationError: null,
+                    },
+                    studentAttendanceDateRangeString: dateStrings,
+                },
+            }));
+        }
+    }
+
+    markAllStudentAtendanceTheSame = () => {
+        console.log("mark all student attendacne");
+        console.log(this.state.attendanceComponent.allStdentAttendanceTheSame);
+        if(this.state.attendanceComponent.allStdentAttendanceTheSame){
+            this.setState(prevState => ({
+                attendanceComponent:{
+                    ...prevState.attendanceComponent,
+                    allStdentAttendanceTheSame: false,   
+                },
+            }));
+        } else {
+            this.setState(prevState => ({
+                attendanceComponent:{
+                    ...prevState.attendanceComponent,
+                    clientSideValidationErrors:{
+                        ...prevState.clientSideValidationErrors,
+                        noStudentSelectedValidationError: null,
+                    },
+                    allStdentAttendanceTheSame: true,
+                },
+            }));
+        }
+    }
+
+    handleStudentAttendanceOtherReasonInput = (e) => {
+        console.log("In other reason input");
+        const target = e.target;
+        const value = target.value;
+        this.setState(prevState => ({
+            attendanceComponent:{
+                ...prevState.attendanceComponent,
+                clientSideValidationErrors:{
+                    ...prevState.clientSideValidationErrors,
+                    studentAttendanceReasonsValidationError: null,
+                },
+                studentAttedanceNotAttendingReason: value,
+            },
+        }));
     }
 
     handleMenuClick = (index) => {
@@ -55,16 +106,150 @@ export class TeacherDashboard extends React.Component {
         if(parseInt(index) === -1){
             this.setState({
                 currentUserClicked: this.state.currentUserDoc,
+                studentClicked: false,
             });
-        } else {
-            let userClicked = this.state.currentUserDoc.teacherStudents[index];
-            console.log("teacherStudents: " + JSON.stringify(this.state.currentUserDoc.teacherStudents[index]))
+        } else if (parseInt(index) === -2){
+            console.log("Pressed student attendance");
             this.setState({
-                currentUserClicked: userClicked,
+                attendanceOptionClicked: true,
             });
         }
+        else {
+            let userClicked = this.state.currentUserDoc.teacherStudents[index];
+            console.log("teacherStudents: " + JSON.stringify(this.state.currentUserDoc.teacherStudents[index]))
+            this.setState(prevState => ({
+                currentUserClicked: userClicked,
+                studentClicked: true,
+                attendanceComponent:{
+                    ...prevState.attendanceComponent,
+                    clientSideValidationErrors:{
+                        ...prevState.clientSideValidationErrors,
+                        noStudentSelectedValidationError: null,
+                    },
+                },
+            }));
+        }
+    }
+
+    handleStudentNotAttendingSubmission = () => {
+        const notAttendingStudent = functions.httpsCallable('notAttendingStudent');
+        let studentUids = []
+        if(this.state.attendanceComponent.allStdentAttendanceTheSame){
+            this.state.currentUserDoc.teacherStudents.forEach(student => {
+                studentUids.push(student.uid);
+            });
+        } else {
+            studentUids.push(this.state.currentUserClicked.uid);
+        }
+        
+        console.log("studentUids: " +  studentUids);
+        notAttendingStudent({
+            uid: this.state.currentUser.uid,
+            reason: this.state.attendanceComponent.studentAttedanceNotAttendingReason,
+            datesString: this.state.attendanceComponent.studentAttendanceDateRangeString.toString(),
+            studentUids: studentUids,
+        }).then(results => {
+            console.log(results);
+            this.setState(prevState => ({
+                attendanceComponent: {
+                    ...prevState.attendanceComponent,
+                    notAttendingSubmitButtonLoading: false,
+                }
+            }));
+        }).catch(err => {
+            console.log(err);
+            this.setState(prevState => ({
+                attendanceComponent: {
+                    ...prevState.attendanceComponent,
+                    notAttendingSubmitButtonLoading: false,
+                }
+            }));
+        });
     }
     
+    studentAttendanceSubmitClicked = (e) => {
+        e.preventDefault();
+        console.log("studentClicked" + this.state.studentClicked);
+        console.log("studentAttendanceSickReasonChosen" + this.state.attendanceComponent.studentAttendanceSickReasonChosen);
+        console.log("studentAttedanceNotAttendingReason" + this.state.attendanceComponent.studentAttedanceNotAttendingReason);
+        console.log("allStdentAttendanceTheSame" + this.state.attendanceComponent.allStdentAttendanceTheSame);
+        console.log("studentAttendanceDateRangeString" + this.state.attendanceComponent.studentAttendanceDateRangeString);
+        console.log("attendanceComponent: " + JSON.stringify(this.state.attendanceComponent));
+        if(this.state.attendanceComponent.studentAttendanceDateRangeString == null && this.state.attendanceComponent.studentAttedanceNotAttendingReason == null){
+            this.setState(prevState => ({
+                attendanceComponent: {
+                    ...prevState.attendanceComponent,
+                    clientSideValidationErrors:{
+                        ...prevState.clientSideValidationErrors,
+                        rangePickerAttendanceValidationError: true,
+                        studentAttendanceReasonsValidationError: true,
+                    },
+                },
+            }));
+        } else if(this.state.attendanceComponent.studentAttendanceDateRangeString == null){
+            this.setState(prevState => ({
+                attendanceComponent: {
+                    ...prevState.attendanceComponent,
+                    clientSideValidationErrors:{
+                        ...prevState.clientSideValidationErrors,
+                        rangePickerAttendanceValidationError: true,
+                    },
+                },
+            }));
+        } else if(this.state.attendanceComponent.studentAttedanceNotAttendingReason == null || this.state.attendanceComponent.studentAttedanceNotAttendingReason == ''){
+            this.setState(prevState => ({
+                attendanceComponent:{
+                    ...prevState.attendanceComponent,
+                    clientSideValidationErrors:{
+                        ...prevState.clientSideValidationErrors,
+                        studentAttendanceReasonsValidationError: true,
+                    },
+                },
+            }));
+        } else if(this.state.studentClicked == false && this.state.attendanceComponent.allStdentAttendanceTheSame == false){
+            this.setState(prevState => ({
+                attendanceComponent:{
+                    ...prevState.attendanceComponent,
+                    clientSideValidationErrors:{
+                        ...prevState.clientSideValidationErrors,
+                        noStudentSelectedValidationError: true,
+                    },
+                },
+            }));
+        } else {
+            this.setState(prevState => ({ 
+                attendanceComponent: {
+                    ...prevState.attendanceComponent,
+                    notAttendingSubmitButtonLoading: true,
+                }
+            }));
+            this.handleStudentNotAttendingSubmission()
+        }
+    }
+
+    studentAttendanceOtherReasonClicked = (e) => {
+        this.setState({
+            attendanceComponent: {
+                studentAttendanceOtherReasonShow: true,
+            }
+        });
+    }
+
+    studentAttendanceSickClicked = (e) => {
+        e.preventDefault();
+        this.setState(prevState => ({
+            attendanceComponent:{
+                ...prevState.attendanceComponent,
+                clientSideValidationErrors:{
+                    ...prevState.clientSideValidationErrors,
+                    studentAttendanceReasonsValidationError: null,
+                },
+                studentAttendanceSickReasonChosen: true,
+                studentAttedanceNotAttendingReason: "sick",
+            },
+        }));
+    }
+
     render() {
         return (
             <React.Fragment>
@@ -73,7 +258,16 @@ export class TeacherDashboard extends React.Component {
                     <Nav 
                         currentUserDoc={this.state.currentUserDoc}
                         currentUserClicked={this.state.currentUserClicked}
+                        studentClicked={this.state.studentClicked}
+                        attendanceOptionClicked={this.state.attendanceOptionClicked}
+                        attendanceComponent={this.state.attendanceComponent}
                         handleMenuClick={this.handleMenuClick}
+                        studentAttendanceSubmitClicked={this.studentAttendanceSubmitClicked}
+                        studentAttendanceSickClicked={this.studentAttendanceSickClicked}
+                        studentAttendanceOtherReasonClicked={this.studentAttendanceOtherReasonClicked}
+                        handleStudentAttendanceOtherReasonInput={this.handleStudentAttendanceOtherReasonInput}
+                        markAllStudentAtendanceTheSame={this.markAllStudentAtendanceTheSame}
+                        handleStudentAttendanceDateRange={this.handleStudentAttendanceDateRange}
                     />
                 </div>
             </React.Fragment>
