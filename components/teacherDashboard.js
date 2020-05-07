@@ -44,6 +44,7 @@ export class TeacherDashboard extends React.Component {
         console.log(this.state.currentUserDoc);
     }
 
+    /* Student attendance functions */
     handleStudentAttendanceDateRange = (dates, dateStrings) => {
         console.log("in date handleStudentAttendanceDateRange");
         console.log("dateStrings: " + dateStrings);
@@ -99,36 +100,6 @@ export class TeacherDashboard extends React.Component {
                 studentAttedanceNotAttendingReason: value,
             },
         }));
-    }
-
-    handleMenuClick = (index) => {
-        console.log('index:' + parseInt(index));
-        if(parseInt(index) === -1){
-            this.setState({
-                currentUserClicked: this.state.currentUserDoc,
-                studentClicked: false,
-            });
-        } else if (parseInt(index) === -2){
-            console.log("Pressed student attendance");
-            this.setState({
-                attendanceOptionClicked: true,
-            });
-        }
-        else {
-            let userClicked = this.state.currentUserDoc.teacherStudents[index];
-            console.log("teacherStudents: " + JSON.stringify(this.state.currentUserDoc.teacherStudents[index]))
-            this.setState(prevState => ({
-                currentUserClicked: userClicked,
-                studentClicked: true,
-                attendanceComponent:{
-                    ...prevState.attendanceComponent,
-                    clientSideValidationErrors:{
-                        ...prevState.clientSideValidationErrors,
-                        noStudentSelectedValidationError: null,
-                    },
-                },
-            }));
-        }
     }
 
     handleStudentNotAttendingSubmission = () => {
@@ -250,6 +221,40 @@ export class TeacherDashboard extends React.Component {
         }));
     }
 
+    /* Student attendance functions finished */
+
+    /* Menu click on the sidebar */
+    handleMenuClick = (index) => {
+        console.log('index:' + parseInt(index));
+        if(parseInt(index) === -1){
+            this.setState({
+                currentUserClicked: this.state.currentUserDoc,
+                studentClicked: false,
+            });
+        } else if (parseInt(index) === -2){
+            console.log("Pressed student attendance");
+            this.setState({
+                attendanceOptionClicked: true,
+            });
+        }
+        else {
+            let userClicked = this.state.currentUserDoc.teacherStudents[index];
+            console.log("teacherStudents: " + JSON.stringify(this.state.currentUserDoc.teacherStudents[index]))
+            this.setState(prevState => ({
+                currentUserClicked: userClicked,
+                studentClicked: true,
+                attendanceComponent:{
+                    ...prevState.attendanceComponent,
+                    clientSideValidationErrors:{
+                        ...prevState.clientSideValidationErrors,
+                        noStudentSelectedValidationError: null,
+                    },
+                },
+            }));
+        }
+    }
+
+    /* Menu click on the sidebar finished*/
     render() {
         return (
             <React.Fragment>
