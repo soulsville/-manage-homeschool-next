@@ -2,7 +2,8 @@ import React from 'react';
 import { Layout, Menu, Breadcrumb } from 'antd';
 import { DatePicker } from 'antd';
 const { RangePicker } = DatePicker;
-import { Form, TimePicker, Button, Tooltip, Input, Row, Col, Card, Avatar, Space, Switch, Alert } from 'antd';
+import { Form, TimePicker, Button, Tooltip, Input, Row, Col, Card, Avatar, Space, Switch, Alert, Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 const { Meta } = Card;
 
 import { CalendarOutlined } from '@ant-design/icons';
@@ -131,14 +132,9 @@ export default class AttendanceComponent extends React.Component {
 
     notAttendingFormSubmitButton = () => {
         if(this.props.attendanceComponent.notAttendingSubmitButtonLoading == true){
+            const antIcon = <LoadingOutlined style={{ fontSize: 50 }} spin />;
             return(
-                <Button type="primary" size="large"
-                onClick={(e) => this.props.studentAttendanceSubmitClicked(e)}
-                style={{ float: 'right' }}
-                loading
-                >
-                    Submit
-                </Button>
+                <Spin indicator={antIcon} style={{ float: 'right' }} />
             )
         } else {
             return(
