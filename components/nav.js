@@ -10,6 +10,7 @@ import {
     MenuUnfoldOutlined,
     MenuFoldOutlined,
     PieChartOutlined,
+    UsergroupAddOutlined,
     DesktopOutlined,
     ContainerOutlined,
     MailOutlined,
@@ -155,14 +156,6 @@ export default class Nav extends React.Component {
             <React.Fragment>
                 <Layout>
                     <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
-                    <Header className="header">
-                    <div className="logo" />
-                    <Menu theme="dark" mode="horizontal" defaultSelectedKeys={['2']}>
-                        <Menu.Item key="1">nav 1</Menu.Item>
-                        <Menu.Item key="2">nav 2</Menu.Item>
-                        <Menu.Item key="3">nav 3</Menu.Item>
-                    </Menu>
-                    </Header>
                     <Layout>
                         <Sider width={200} className="site-layout-background">
                             <Menu
@@ -211,15 +204,19 @@ export default class Nav extends React.Component {
                                     <PieChartOutlined />
                                     <span>Student Attendance</span>
                                 </Menu.Item>
+                                <Menu.Item key="-3">
+                                    <UsergroupAddOutlined />
+                                    <span>Students</span>
+                                </Menu.Item>
                             </Menu>
                         </Sider>
-                        <Layout style={{ padding: '0 24px 24px' }}>
+                        <Layout style={{ padding: '0 24px 24px', minHeight: '100vh' }}>
                             <Content
                             className="site-layout-background"
                             style={{
                                 padding: 24,
                                 margin: 0,
-                                minHeight: 280,
+                                minHeight: "100vh",
                             }}
                             >
                                 {
