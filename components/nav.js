@@ -17,6 +17,7 @@ import {
   } from '@ant-design/icons';
 import stylesheet from 'antd/dist/antd.min.css';
 import AttendanceComponent from '../components/attendanceComponent';
+import TeacherStudentComponent from '../components/teacherStudentComponent';
 
 
 // const Nav = () => (
@@ -148,7 +149,11 @@ export default class Nav extends React.Component {
                     handleStudentAttendanceDateRange={this.props.handleStudentAttendanceDateRange}
                     attendanceComponent={this.props.attendanceComponent}
                    />
-        }    
+        } else if(this.props.studentsOptionClicked) {
+            return <TeacherStudentComponent
+                    teacherStudentComponent={this.props.teacherStudentComponent}
+                   />
+        }
     }
 
     render() {

@@ -16,6 +16,7 @@ export class TeacherDashboard extends React.Component {
             currentUserClicked: this.props.currentUserDoc,
             studentClicked: false,
             attendanceOptionClicked: false,
+            studentsOptionClicked: false,
             attendanceComponent: {
                 clientSideValidationErrors:{
                     rangePickerAttendanceValidationError: null,
@@ -28,7 +29,10 @@ export class TeacherDashboard extends React.Component {
                 allStdentAttendanceTheSame: false,
                 studentAttendanceDateRangeString: null,
                 notAttendingSubmitButtonLoading: false,
-            }
+            },
+            teacherStudentComponent: {
+                currentUserDoc: this.props.currentUserDoc,
+            },
         }
         this.handleMenuClick = this.handleMenuClick.bind(this);
         this.studentAttendanceSubmitClicked = this.studentAttendanceSubmitClicked.bind(this);
@@ -236,6 +240,11 @@ export class TeacherDashboard extends React.Component {
             this.setState({
                 attendanceOptionClicked: true,
             });
+        } else if (parseInt(index) === -3) {
+            this.setState({
+                attendanceOptionClicked: false,
+                studentsOptionClicked: true,
+            });
         }
         else {
             let userClicked = this.state.currentUserDoc.teacherStudents[index];
@@ -266,6 +275,8 @@ export class TeacherDashboard extends React.Component {
                         studentClicked={this.state.studentClicked}
                         attendanceOptionClicked={this.state.attendanceOptionClicked}
                         attendanceComponent={this.state.attendanceComponent}
+                        studentsOptionClicked={this.state.studentsOptionClicked}
+                        teacherStudentComponent={this.state.teacherStudentComponent}
                         handleMenuClick={this.handleMenuClick}
                         studentAttendanceSubmitClicked={this.studentAttendanceSubmitClicked}
                         studentAttendanceSickClicked={this.studentAttendanceSickClicked}
