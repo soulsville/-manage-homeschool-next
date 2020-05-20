@@ -150,8 +150,12 @@ export default class Nav extends React.Component {
                     attendanceComponent={this.props.attendanceComponent}
                    />
         } else if(this.props.studentsOptionClicked) {
+            console.log("In nav.js studentsOptionClicked");
+            console.log(this.props.teacherStudentComponent);
+            console.log(this.props.teacherStudentComponent.currentUserDoc);
             return <TeacherStudentComponent
                     teacherStudentComponent={this.props.teacherStudentComponent}
+                    teacherStudentComponentHandleTeacherStudentClick={this.props.teacherStudentComponentHandleTeacherStudentClick}
                    />
         }
     }

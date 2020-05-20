@@ -41,11 +41,18 @@ export class TeacherDashboard extends React.Component {
         this.handleStudentAttendanceOtherReasonInput = this.handleStudentAttendanceOtherReasonInput.bind(this);
         this.markAllStudentAtendanceTheSame = this.markAllStudentAtendanceTheSame.bind(this);
         this.handleStudentAttendanceDateRange = this.handleStudentAttendanceDateRange.bind(this);
+        this.teacherStudentComponentHandleTeacherStudentClick = this.teacherStudentComponentHandleTeacherStudentClick.bind(this);
     }
 
     componentDidMount() {
         console.log("in teacher dashboard class....");
         console.log(this.state.currentUserDoc);
+        console.log(this.state.teacherStudentComponent.currentUserDoc);
+    }
+
+    teacherStudentComponentHandleTeacherStudentClick = (e) => {
+        console.log("im in teacherStudentComponentHandleTeacherStudentClick..")
+        console.log(e);
     }
 
     /* Student attendance functions */
@@ -277,6 +284,7 @@ export class TeacherDashboard extends React.Component {
                         attendanceComponent={this.state.attendanceComponent}
                         studentsOptionClicked={this.state.studentsOptionClicked}
                         teacherStudentComponent={this.state.teacherStudentComponent}
+                        teacherStudentComponentHandleTeacherStudentClick={this.teacherStudentComponentHandleTeacherStudentClick}
                         handleMenuClick={this.handleMenuClick}
                         studentAttendanceSubmitClicked={this.studentAttendanceSubmitClicked}
                         studentAttendanceSickClicked={this.studentAttendanceSickClicked}

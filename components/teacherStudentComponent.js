@@ -3,7 +3,7 @@ import { Layout, Menu, Breadcrumb } from 'antd';
 import { DatePicker } from 'antd';
 const { RangePicker } = DatePicker;
 const { Content } = Layout;
-import { Form, List, Button, Tooltip, Input, Row, Col, Card, Avatar, Space, Switch, Alert, Spin, Typography } from 'antd';
+import { Form, List, Button, Tooltip, Input, Row, Col, Card, Avatar, Space, Switch, Alert, Spin, Typography, Icon } from 'antd';
 import { FolderAddTwoTone } from '@ant-design/icons';
 const { Meta } = Card;
 const { Title, Paragraph, Text } = Typography;
@@ -16,12 +16,12 @@ import stylesheet from 'antd/dist/antd.min.css';
 export default class TeacherStudentComponent extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-        }
+        this.teacherStudentComponentHandleTeacherStudentClick = this.props.teacherStudentComponentHandleTeacherStudentClick.bind(this);
     }
 
     componentDidMount() {
         console.log("in teacherStudent component....");
+        console.log(this.props.teacherStudentComponent.currentUserDoc);
     }
 
     titleComponent = () => {
@@ -37,6 +37,38 @@ export default class TeacherStudentComponent extends React.Component {
             </Button>
         )
     }
+
+    showStudentsComponent = (context) => {
+        console.log("in teacherStudentComponent");
+        console.log(this.props.teacherStudentComponent.currentUserDoc);
+        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentComponent.currentUserDoc.teacherStudents){
+            return(
+                <List style={{position: "absolute"}}>
+                {
+                    this.props.teacherStudentComponent.currentUserDoc.teacherStudents.map(function(d, idx){
+                        return(
+                            <List.Item key={d.uid} style={{float: "left", position: "absolute"}}
+                            actions={[
+                                <a key="list-loadmore-more" onClick={() => context.props.teacherStudentComponentHandleTeacherStudentClick(d)}>Edit</a>
+                            ]}
+                            >
+                                <List.Item.Meta
+                                    avatar={d.photoUrl ? <Avatar src={d.photoUrl} /> : <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                                    title={d.displayName ? d.displayName : "No name for student"}
+                                    description={d.email ? d.email : "No email set for student"}
+                                />
+                            </List.Item>
+                        )
+                    })
+                }
+                </List>
+            )
+        } else {
+            return(
+                null
+            )
+        }
+    }    
 
     // TODO: move the list to it's own function, allow for editing students that already exists
     render() {
@@ -54,25 +86,8 @@ export default class TeacherStudentComponent extends React.Component {
                     {this.titleComponent()}
                     {this.addStudentsButtonComponent()}
                     <br/>
-                    <List>
-                    {
-                        this.props.teacherStudentComponent.currentUserDoc ?
-                        this.props.teacherStudentComponent.currentUserDoc.teacherStudents.map(function(d, idx){
-                            return (
-                                <List.Item key={idx}>
-                                    <List.Item.Meta
-                                    avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-                                    title={<a href="https://ant.design">Yup</a>}
-                                    description="Ant Design, a design language for background applications, is refined by Ant UED Team"
-                                    />
-                                    {d.email}
-                                </List.Item>
-                            )
-                        })
-                        :
-                        null
-                    }
-                    </List>
+                    <br/>
+                    {this.showStudentsComponent(this)}
                 </Content>
             </React.Fragment>
         );
