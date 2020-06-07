@@ -41,6 +41,7 @@ export default class TeacherStudentComponent extends React.Component {
     showStudentsComponent = (context) => {
         console.log("in teacherStudentComponent");
         console.log(this.props.teacherStudentComponent.currentUserDoc);
+        // check if the individualStudentEditClicked is clicked 
         if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentComponent.currentUserDoc.teacherStudents){
             return(
                 <List style={{position: "absolute"}}>

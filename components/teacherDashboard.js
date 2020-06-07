@@ -32,6 +32,8 @@ export class TeacherDashboard extends React.Component {
             },
             teacherStudentComponent: {
                 currentUserDoc: this.props.currentUserDoc,
+                individualStudentEditClicked: false,
+                individualEditStudentInformation: null,
             },
         }
         this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -50,10 +52,30 @@ export class TeacherDashboard extends React.Component {
         console.log(this.state.teacherStudentComponent.currentUserDoc);
     }
 
+    /* teacherStudentComponent functions */
     teacherStudentComponentHandleTeacherStudentClick = (e) => {
         console.log("im in teacherStudentComponentHandleTeacherStudentClick..")
-        console.log(e);
+        console.log("studentUid: " + e.uid);
+        console.log("uid: " + this.state.currentUserDoc.uid);
+        const getStudentDocumentAsTeacher = functions.httpsCallable('getStudentDocumentAsTeacher');
+        getStudentDocumentAsTeacher({
+            uid: this.state.currentUserDoc.uid,
+            studentUid: e.uid,
+        }).then(result => {
+            console.log(result);
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    individualStudentEditClicked: true,
+                    individualEditStudentInformation: result
+                }
+            }));
+        }).catch(err => {
+            console.log(err)
+        })
     }
+
+    /* teacherStudentComponent functions end */
 
     /* Student attendance functions */
     handleStudentAttendanceDateRange = (dates, dateStrings) => {
