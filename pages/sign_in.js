@@ -4,6 +4,8 @@ import Nav from '../components/nav';
 import { withRedux } from '../lib/redux'
 import { auth, firebase } from '../src/firebase';
 import Router from 'next/router';
+import { Card } from 'antd';
+import stylesheet from 'antd/dist/antd.min.css';
 
 
 class SignIn extends React.Component {
@@ -72,7 +74,7 @@ class SignIn extends React.Component {
     if (!this.isPasswordValid()) {
       this.setState({
         validationPasswordError: {
-          message: 'Invalid Password needs to be minumum of six characters',
+          message: 'Password needs to be minumum of six characters',
         },
       });
     } else {
@@ -126,7 +128,7 @@ class SignIn extends React.Component {
     if ((!this.isPasswordValid() && !this.isEmailValid())) {
       this.setState({
         validationPasswordError: {
-          message: 'Invalid Password needs to be minumum of six characters',
+          message: 'Password needs to be minumum of six characters',
         },
         validationEmailError: {
           message: 'Email Address Not Valid',
@@ -135,7 +137,7 @@ class SignIn extends React.Component {
     } else if (!this.isPasswordValid()) {
       this.setState({
         validationPasswordError: {
-          message: 'Invalid Password needs to be minumum of six characters',
+          message: 'Password needs to be minumum of six characters',
         },
       });
     } else if (!this.isEmailValid()) {
@@ -170,121 +172,80 @@ class SignIn extends React.Component {
 
   render() {
     return (
-      <div>
-        <div className="row">
-          <Link href="/sign_up">
+      <React.Fragment>
+        <div>
+        <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
+        <Card title="Card title" bordered={false} style={{ width: 300 }}>
+          <p>Card content</p>
+          <p>Card content</p>
+          <p>Card content</p>
+        </Card>
+          <div className="row">
+            <Link href="/sign_up">
+              <a className="card">
+                <p>Sign up</p>
+              </a>
+            </Link>
+            <button onClick={this.handleSignInWithGoogle}>Sign In using google</button>
+          </div>
+          <div className="row">
             <a className="card">
-              <h3>Go to Sign up&rarr;</h3>
-              <p>Visit Sign up page</p>
+              <form>
+                Email:<br/>
+                <input
+                  type="email"
+                  name="Email"
+                  label='Email'
+                  placeholder="Email"
+                  value={this.state.clientEmail}
+                  onChange={(event)=>this.handleEmail(event)}
+                  onBlur={() => this.onBlurHandleEmail()}
+                />
+                <p>
+                {
+                  this.state.validationEmailError ?
+                  this.state.validationEmailError.message :
+                  null
+                 }
+                </p>
+                <br/>
+                Password:<br/>
+                <input
+                  type="password"
+                  name="psw"
+                  label='Password'
+                  placeholder='Password'
+                  onChange={(event) => this.handlePassword(event)}
+                  onBlur={() => this.onBlurHandlePassword()}
+                  error={this.state.validationPasswordError.message}
+                />
+                {
+                  this.state.validationPasswordError ?
+                  this.state.validationPasswordError.message :
+                  null
+                 }
+                <br/>
+                {
+                  this.state.loading ?
+                  <p>Loading...</p> :
+                  <button
+                    content='Login'
+                    onClick={() => this.handleClick(event)}>
+                    Login
+                  </button>
+                }
+                {
+                  this.state.showServerSideError ?
+                  this.state.showServerSideError.message :
+                  null
+                }
+              </form>
             </a>
-          </Link>
-          <button onClick={this.handleSignInWithGoogle}>Sign In using google</button>
-          <button onClick={this.handleLogout}>Logout</button>
+          </div>
         </div>
-        <div className="row">
-          <a className="card">
-            <form>
-              Email:<br/>
-              <input 
-                type="email"
-                name="Email"
-                label='Email'
-                placeholder="Email"
-                value={this.state.clientEmail}
-                onChange={(event)=>this.handleEmail(event)}
-                onBlur={() => this.onBlurHandleEmail()}
-              />
-              <p>
-              {
-                this.state.validationEmailError ?
-                this.state.validationEmailError.message :
-                null
-               }
-              </p>
-              <br/>
-              Password:<br/>
-              <input 
-                type="password" 
-                name="psw"
-                label='Password'
-                placeholder='Password'
-                onChange={(event) => this.handlePassword(event)}
-                onBlur={() => this.onBlurHandlePassword()}
-                error={this.state.validationPasswordError.message}
-              />
-              {
-                this.state.validationPasswordError ?
-                this.state.validationPasswordError.message :
-                null
-               }
-              <br/>
-              {
-                this.state.loading ?
-                <p>Loading...</p> :
-                <button
-                  content='Login'
-                  onClick={() => this.handleClick(event)}>
-                  Login
-                </button>
-              }
-              {
-                this.state.showServerSideError ?
-                this.state.showServerSideError.message :
-                null
-              }
-            </form>
-          </a>
-        </div>
-        <style jsx>{`
-          .hero {
-          width: 100%;
-          color: #333;
-          }
-          .title {
-          margin: 0;
-          width: 100%;
-          padding-top: 80px;
-          line-height: 1.15;
-          font-size: 48px;
-          }
-          .title,
-          .description {
-          text-align: center;
-          }
-          .row {
-          max-width: 880px;
-          margin: 80px auto 40px;
-          display: flex;
-          flex-direction: row;
-          justify-content: space-around;
-          }
-          .card {
-          padding: 18px 18px 24px;
-          width: 220px;
-          text-align: left;
-          text-decoration: none;
-          color: #434343;
-          border: 1px solid #9b9b9b;
-          }
-          .card:hover {
-          border-color: #067df7;
-          }
-          .card h3 {
-          margin: 0;
-          color: #067df7;
-          font-size: 18px;
-          }
-          .card p {
-          margin: 0;
-          padding: 12px 0 0;
-          font-size: 13px;
-          color: #333;
-          }
-        `}</style>
-      </div>
+      </React.Fragment>
     )
   }
 }
 
 export default withRedux(SignIn)
-
