@@ -340,7 +340,7 @@ class SignUp extends React.Component {
                   help='Passwords Must Match'>
                 <Input
                   size='medium'
-                  type='confirmPassword'
+                  type='password'
                   placeholder='Confirm Password'
                   prefix={<LockOutlined style={{color: '#267FFF'}}/>}
                   value={this.state.clientConfirmPassword}
@@ -352,7 +352,7 @@ class SignUp extends React.Component {
                 <Form.Item>
                 <Input
                 size='medium'
-                type='confirmPassword'
+                type='password'
                 placeholder='Confirm Password'
                 prefix={<LockOutlined style={{color: '#267FFF'}}/>}
                 value={this.state.clientConfirmPassword}
