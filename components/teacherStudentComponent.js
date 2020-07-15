@@ -8,10 +8,13 @@ import { FolderAddTwoTone } from '@ant-design/icons';
 const { Meta } = Card;
 const { Title, Paragraph, Text } = Typography;
 
+import { LoadingOutlined } from '@ant-design/icons';
 
-import { CalendarOutlined } from '@ant-design/icons';
 
 import stylesheet from 'antd/dist/antd.min.css';
+
+import TeacherEditStudentComponent from '../components/individualStudentTeacherEdit';
+
 
 export default class TeacherStudentComponent extends React.Component {
     constructor(props) {
@@ -25,24 +28,29 @@ export default class TeacherStudentComponent extends React.Component {
     }
 
     titleComponent = () => {
-        return(
-            <Title level={2} style={{float: "left"}}>All Students</Title>
-        )
+        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentComponent.currentUserDoc.teacherStudents && !this.props.teacherStudentComponent.individualStudentEditClicked){
+            return(
+                <Title level={2} style={{float: "left"}}>All Students</Title>
+            )
+        }
     }
 
     addStudentsButtonComponent = () => {
-        return(
-            <Button type="primary" icon={<FolderAddTwoTone />} size="default" style={{marginLeft: 40}}>
-                Add Students
-            </Button>
-        )
+        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentComponent.currentUserDoc.teacherStudents && !this.props.teacherStudentComponent.individualStudentEditClicked){
+            return(
+                <Button type="primary" icon={<FolderAddTwoTone />} size="default" style={{marginLeft: 40}}>
+                    Add Students
+                </Button>
+            )
+        }
     }
 
     showStudentsComponent = (context) => {
         console.log("in teacherStudentComponent");
         console.log(this.props.teacherStudentComponent.currentUserDoc);
         // check if the individualStudentEditClicked is clicked 
-        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentComponent.currentUserDoc.teacherStudents){
+        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentComponent.currentUserDoc.teacherStudents && !this.props.teacherStudentComponent.individualStudentEditClicked){
+            const antIcon = <LoadingOutlined style={{ fontSize: 20 }} spin />;
             return(
                 <List style={{position: "absolute"}}>
                 {
@@ -50,7 +58,13 @@ export default class TeacherStudentComponent extends React.Component {
                         return(
                             <List.Item key={d.uid} style={{float: "left", position: "absolute"}}
                             actions={[
-                                <a key="list-loadmore-more" onClick={() => context.props.teacherStudentComponentHandleTeacherStudentClick(d)}>Edit</a>
+                                <a key="list-loadmore-more" onClick={() => context.props.teacherStudentComponentHandleTeacherStudentClick(d)}>
+                                    {context.props.teacherStudentComponent.individualStudentEditLoading ?
+                                        <Spin indicator={antIcon} style={{ float: 'right' }} />
+                                    :
+                                        <div>Edit</div>
+                                    }
+                                </a>
                             ]}
                             >
                                 <List.Item.Meta
@@ -64,6 +78,26 @@ export default class TeacherStudentComponent extends React.Component {
                 }
                 </List>
             )
+        } else if (this.props.teacherStudentComponent.individualStudentEditClicked == true) {
+            return <TeacherEditStudentComponent
+                    individualEditStudentInformation={this.props.teacherStudentComponent.individualEditStudentInformation}
+                    teacherStudentComponent={this.props.teacherStudentComponent}
+                    handleIndividualStudentTeacherEditNameChange={this.props.handleIndividualStudentTeacherEditNameChange}
+                    onBlurhandleIndividualStudentTeacherEditNameChange={this.props.onBlurhandleIndividualStudentTeacherEditNameChange}
+                    handleIndividualStudentTeacherEditEmailChange={this.props.handleIndividualStudentTeacherEditEmailChange}
+                    onBlurhandleIndividualStudentTeacherEditEmailChange={this.props.onBlurhandleIndividualStudentTeacherEditEmailChange}
+                    handleIndividualStudentTeacherEditGradeChange={this.props.handleIndividualStudentTeacherEditGradeChange}
+                    onBlurhandleIndividualStudentTeacherEditGradeChange={this.props.onBlurhandleIndividualStudentTeacherEditGradeChange}
+                   />
+            // displayName: "asdlkfj 89234"
+            // email: "alskdjf@gmail.com"
+            // emailVerified: false
+            // isNewUser: true
+            // photoURL: null
+            // teacherUid: "19IhT36iYrc8ttuKtLXgyx4yNGE2"
+            // uid: "CaAUbJk1CVeimMJRPJyJbmTHhmP2"
+            // userType: "student"
+            // TODO: add edit information with the stuff above add a save button and also a back button
         } else {
             return(
                 null

@@ -156,6 +156,12 @@ export default class Nav extends React.Component {
             return <TeacherStudentComponent
                     teacherStudentComponent={this.props.teacherStudentComponent}
                     teacherStudentComponentHandleTeacherStudentClick={this.props.teacherStudentComponentHandleTeacherStudentClick}
+                    handleIndividualStudentTeacherEditNameChange={this.props.handleIndividualStudentTeacherEditNameChange}
+                    onBlurhandleIndividualStudentTeacherEditNameChange={this.props.onBlurhandleIndividualStudentTeacherEditNameChange}
+                    handleIndividualStudentTeacherEditEmailChange={this.props.handleIndividualStudentTeacherEditEmailChange}
+                    onBlurhandleIndividualStudentTeacherEditEmailChange={this.props.onBlurhandleIndividualStudentTeacherEditEmailChange}
+                    handleIndividualStudentTeacherEditGradeChange={this.props.handleIndividualStudentTeacherEditGradeChange}
+                    onBlurhandleIndividualStudentTeacherEditGradeChange={this.props.onBlurhandleIndividualStudentTeacherEditGradeChange}
                    />
         }
     }

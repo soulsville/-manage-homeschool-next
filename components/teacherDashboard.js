@@ -32,8 +32,19 @@ export class TeacherDashboard extends React.Component {
             },
             teacherStudentComponent: {
                 currentUserDoc: this.props.currentUserDoc,
+                // TODO: change this back to false testing really fast
+                // thnk about changing the email and password if they don't match
+                // the currently using one when editing student profiles
                 individualStudentEditClicked: false,
                 individualEditStudentInformation: null,
+                individualStudentEditLoading: false,
+                individualStudentTeacherEditName: null,
+                individualStudentTeacherEditNameError: null,
+                individualStudentTeacherEditEmail: null,
+                individualStudentTeacherEditEmailError: null,
+                individualStudentTeacherEditEmailPristine: true,
+                individualStudentTeacherEditGrade: null,
+                individualStudentTeacherEditGradeError: null,
             },
         }
         this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -44,6 +55,12 @@ export class TeacherDashboard extends React.Component {
         this.markAllStudentAtendanceTheSame = this.markAllStudentAtendanceTheSame.bind(this);
         this.handleStudentAttendanceDateRange = this.handleStudentAttendanceDateRange.bind(this);
         this.teacherStudentComponentHandleTeacherStudentClick = this.teacherStudentComponentHandleTeacherStudentClick.bind(this);
+        this.handleIndividualStudentTeacherEditNameChange = this.handleIndividualStudentTeacherEditNameChange.bind(this);
+        this.onBlurhandleIndividualStudentTeacherEditNameChange = this.onBlurhandleIndividualStudentTeacherEditNameChange.bind(this);
+        this.handleIndividualStudentTeacherEditEmailChange = this.handleIndividualStudentTeacherEditEmailChange.bind(this);
+        this.onBlurhandleIndividualStudentTeacherEditEmailChange = this.onBlurhandleIndividualStudentTeacherEditEmailChange.bind(this);
+        this.handleIndividualStudentTeacherEditGradeChange = this.handleIndividualStudentTeacherEditGradeChange.bind(this);
+        this.onBlurhandleIndividualStudentTeacherEditGradeChange = this.onBlurhandleIndividualStudentTeacherEditGradeChange.bind(this);
     }
 
     componentDidMount() {
@@ -52,22 +69,166 @@ export class TeacherDashboard extends React.Component {
         console.log(this.state.teacherStudentComponent.currentUserDoc);
     }
 
+    /* individualStudentTeacherEdit component functions */
+    /* Email */
+    validateEmail = (email) => {
+        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
+    
+    handleIndividualStudentTeacherEditEmailChange = (e) => {
+        console.log("in handleIndividualStudentTeacherEditEmailChange");
+        const target = e.target;
+        const value = target.value;
+        console.log("value being set for handleIndividualStudentTeacherEditEmailChange" + value);
+        
+        if(this.state.individualStudentTeacherEditEmailPristine) {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    individualStudentTeacherEditEmail: value,
+                }
+            }));
+        } else {
+            if(this.validateEmail(value)) {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        individualStudentTeacherEditEmail: value,
+                        individualStudentTeacherEditEmailError: null,
+                    }
+                }));
+            } else {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        individualStudentTeacherEditEmail: value,
+                        individualStudentTeacherEditEmailError: true,
+                    }
+                }));
+            }
+        }
+    }
+
+    onBlurhandleIndividualStudentTeacherEditEmailChange = (e) => {
+        if(!this.validateEmail(this.state.teacherStudentComponent.individualStudentTeacherEditEmail)) {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    individualStudentTeacherEditEmailError: true,
+                    individualStudentTeacherEditEmailPristine: false,
+                }
+            }));
+        }
+    }
+    /* End Email */
+
+    /* Grade Level */
+    handleIndividualStudentTeacherEditGradeChange = (e) => {
+        console.log("in handleIndividualStudentTeacherEditGradeChange");
+        const target = e.target;
+        const value = target.value;
+        console.log("value being set for handleIndividualStudentTeacherEditGradeChange" + value);
+        if(value) {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    individualStudentTeacherEditGrade: value,
+                    individualStudentTeacherEditGradeError: null,
+                }
+            }));
+        } else {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    individualStudentTeacherEditGrade: value,
+                    individualStudentTeacherEditGradeError: true,
+                }
+            }));
+        }
+    }
+
+    onBlurhandleIndividualStudentTeacherEditGradeChange = (e) => {
+        e.preventDefault();
+        const target = e.target;
+        const value = target.value;
+        if(value === "") {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    individualStudentTeacherEditGrade: value,
+                    individualStudentTeacherEditGradeError: true,
+                }
+            }));
+        }
+    }
+    /* End Grade Level */
+    
+    /* Name */
+    handleIndividualStudentTeacherEditNameChange = (e) => {
+        console.log("in handleIndividualStudentTeacherEditNameChange");
+        const target = e.target;
+        const value = target.value;
+        console.log("value being set for handleIndividualStudentTeacherEditNameChange" + value);
+        if(value) {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    individualStudentTeacherEditName: value,
+                    individualStudentTeacherEditNameError: null,
+                }
+            }));
+        } else {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    individualStudentTeacherEditName: value,
+                    individualStudentTeacherEditNameError: "Name can't be blank",
+                }
+            }));
+        }
+    }
+
+    onBlurhandleIndividualStudentTeacherEditNameChange = (e) => {
+        e.preventDefault();
+        const target = e.target;
+        const value = target.value;
+        if(value === "") {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    individualStudentTeacherEditName: value,
+                    individualStudentTeacherEditNameError: "Name can't be blank",
+                }
+            }));
+        }
+    }
+    /* End Name */
+
+    /* individualStudentTeacherEdit component functions  end */
+
     /* teacherStudentComponent functions */
     teacherStudentComponentHandleTeacherStudentClick = (e) => {
         console.log("im in teacherStudentComponentHandleTeacherStudentClick..")
         console.log("studentUid: " + e.uid);
         console.log("uid: " + this.state.currentUserDoc.uid);
+        this.setState(prevState => ({
+            teacherStudentComponent: {
+                ...prevState.teacherStudentComponent,
+                individualStudentEditLoading: true
+            }
+        }));
         const getStudentDocumentAsTeacher = functions.httpsCallable('getStudentDocumentAsTeacher');
         getStudentDocumentAsTeacher({
             uid: this.state.currentUserDoc.uid,
             studentUid: e.uid,
         }).then(result => {
-            console.log(result);
             this.setState(prevState => ({
                 teacherStudentComponent: {
                     ...prevState.teacherStudentComponent,
                     individualStudentEditClicked: true,
-                    individualEditStudentInformation: result
+                    individualEditStudentInformation: result,
+                    individualStudentEditLoading: false,
                 }
             }));
         }).catch(err => {
@@ -314,6 +475,12 @@ export class TeacherDashboard extends React.Component {
                         handleStudentAttendanceOtherReasonInput={this.handleStudentAttendanceOtherReasonInput}
                         markAllStudentAtendanceTheSame={this.markAllStudentAtendanceTheSame}
                         handleStudentAttendanceDateRange={this.handleStudentAttendanceDateRange}
+                        handleIndividualStudentTeacherEditNameChange={this.handleIndividualStudentTeacherEditNameChange}
+                        onBlurhandleIndividualStudentTeacherEditNameChange={this.onBlurhandleIndividualStudentTeacherEditNameChange}
+                        handleIndividualStudentTeacherEditEmailChange={this.handleIndividualStudentTeacherEditEmailChange}
+                        onBlurhandleIndividualStudentTeacherEditEmailChange={this.handleIndividualStudentTeacherEditEmailChange}
+                        handleIndividualStudentTeacherEditGradeChange={this.handleIndividualStudentTeacherEditGradeChange}
+                        onBlurhandleIndividualStudentTeacherEditGradeChange={this.onBlurhandleIndividualStudentTeacherEditGradeChange}
                     />
                 </div>
             </React.Fragment>
