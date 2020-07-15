@@ -14,25 +14,6 @@ export default class TeacherEditStudentComponent extends React.Component {
         console.log("in TeacherEditStudentComponent class....");
         console.log(this.props.individualEditStudentInformation);
         console.log(this.props.individualEditStudentInformation.data.data.displayName);
-
-    }
-
-    backButtonComponent = () => {
-        return(
-            <Button style={{ float: 'left' }}>
-                Back
-            </Button>
-        )
-    }
-
-    updateButtonComponent = () => {
-        return(
-            <Button type="primary" size="large"
-            style={{ float: 'right' }}
-            >
-                Update
-            </Button>
-        )
     }
 
     nameFormItemComponent = () => {
@@ -74,7 +55,7 @@ export default class TeacherEditStudentComponent extends React.Component {
                     Email
                     <Form.Item
                     validateStatus="error"
-                    help="Please insert a valid insert">
+                    help="Please insert a valid Email">
                         <Input size="medium"
                         defaultValue={this.props.individualEditStudentInformation.data.data.email}
                         onChange={(event)=>this.props.handleIndividualStudentTeacherEditEmailChange(event)}
@@ -90,7 +71,7 @@ export default class TeacherEditStudentComponent extends React.Component {
                     <Form.Item>
                         <Input size="medium"
                         defaultValue={this.props.individualEditStudentInformation.data.data.email}
-                        onChange={(event)=>this.props.handleIndividualStudentTeacherEditNameChange(event)}
+                        onChange={(event)=>this.props.handleIndividualStudentTeacherEditEmailChange(event)}
                         onBlur={(event)=>this.props.onBlurhandleIndividualStudentTeacherEditEmailChange(event)}
                         />
                     </Form.Item>
@@ -109,7 +90,7 @@ export default class TeacherEditStudentComponent extends React.Component {
                     help="Current grade can't be empty">
                         <Input size="medium"
                          defaultValue={this.props.individualEditStudentInformation.data.data.currentGradeLevel}
-                         onChange={(event)=>this.props.handleIndividualStudentTeacherEditNameChange(event)}
+                         onChange={(event)=>this.props.handleIndividualStudentTeacherEditGradeChange(event)}
                          onBlur={(event)=>this.props.onBlurhandleIndividualStudentTeacherEditGradeChange(event)}
                         />
                     </Form.Item>
@@ -122,7 +103,7 @@ export default class TeacherEditStudentComponent extends React.Component {
                     <Form.Item>
                         <Input size="medium"
                          defaultValue={this.props.individualEditStudentInformation.data.data.currentGradeLevel}
-                         onChange={(event)=>this.props.handleIndividualStudentTeacherEditNameChange(event)}
+                         onChange={(event)=>this.props.handleIndividualStudentTeacherEditGradeChange(event)}
                          onBlur={(event)=>this.props.onBlurhandleIndividualStudentTeacherEditGradeChange(event)}
                         />
                     </Form.Item>
@@ -132,15 +113,52 @@ export default class TeacherEditStudentComponent extends React.Component {
     }
 
     passwordFormItemComponent = () => {
+        if(this.props.teacherStudentComponent.individualStudentTeacherEditPasswordError) {
+            return(
+                <div>
+                    New Password
+                    <Form.Item
+                    validateStatus="error"
+                    help="Password needs to be at least 6 characters">
+                        <Input size="medium" type="password"
+                        onChange={(event)=>this.props.handleIndividualStudentTeacherEditPasswordChange(event)}
+                        onBlur={(event)=>this.props.onBlurhandleIndividualStudentTeacherEditPasswordChange(event)}
+                        value={this.props.teacherStudentComponent.individualStudentTeacherEditPassword}
+                        />
+                    </Form.Item>
+                </div>
+            )
+        } else {
+            return(
+                <div>
+                    New Password
+                    <Form.Item>
+                        <Input size="medium" type="password"
+                        onChange={(event)=>this.props.handleIndividualStudentTeacherEditPasswordChange(event)}
+                        onBlur={(event)=>this.props.onBlurhandleIndividualStudentTeacherEditPasswordChange(event)}
+                        value={this.props.teacherStudentComponent.individualStudentTeacherEditPassword}
+                        />
+                    </Form.Item>
+                </div>
+            )
+        }
+    }
+
+    backButtonComponent = () => {
         return(
-            <div>
-                New Password
-                <Form.Item>
-                    <Input size="medium" type="password"
-                     onChange={(event)=>this.props.handleIndividualStudentTeacherEditNameChange(event)}
-                    />
-                </Form.Item>
-            </div>
+            <Button style={{ float: 'left' }}>
+                Back
+            </Button>
+        )
+    }
+
+    updateButtonComponent = () => {
+        return(
+            <Button type="primary" size="large"
+            style={{ float: 'right' }}
+            >
+                Update
+            </Button>
         )
     }
 

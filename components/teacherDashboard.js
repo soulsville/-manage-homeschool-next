@@ -40,11 +40,14 @@ export class TeacherDashboard extends React.Component {
                 individualStudentEditLoading: false,
                 individualStudentTeacherEditName: null,
                 individualStudentTeacherEditNameError: null,
-                individualStudentTeacherEditEmail: null,
+                individualStudentTeacherEditEmail: "",
                 individualStudentTeacherEditEmailError: null,
                 individualStudentTeacherEditEmailPristine: true,
                 individualStudentTeacherEditGrade: null,
                 individualStudentTeacherEditGradeError: null,
+                individualStudentTeacherEditPassword: "",
+                individualStudentTeacherEditPasswordError: null,
+                individualStudentTeacherEditPasswordPristine: true,
             },
         }
         this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -61,6 +64,8 @@ export class TeacherDashboard extends React.Component {
         this.onBlurhandleIndividualStudentTeacherEditEmailChange = this.onBlurhandleIndividualStudentTeacherEditEmailChange.bind(this);
         this.handleIndividualStudentTeacherEditGradeChange = this.handleIndividualStudentTeacherEditGradeChange.bind(this);
         this.onBlurhandleIndividualStudentTeacherEditGradeChange = this.onBlurhandleIndividualStudentTeacherEditGradeChange.bind(this);
+        this.handleIndividualStudentTeacherEditPasswordChange = this.handleIndividualStudentTeacherEditPasswordChange.bind(this);
+        this.onBlurhandleIndividualStudentTeacherEditPasswordChange = this.onBlurhandleIndividualStudentTeacherEditPasswordChange.bind(this);
     }
 
     componentDidMount() {
@@ -81,8 +86,8 @@ export class TeacherDashboard extends React.Component {
         const target = e.target;
         const value = target.value;
         console.log("value being set for handleIndividualStudentTeacherEditEmailChange" + value);
-        
-        if(this.state.individualStudentTeacherEditEmailPristine) {
+        console.log("this.state.teacherStudentComponent.individualStudentTeacherEditEmailPristine " + this.state.teacherStudentComponent.individualStudentTeacherEditEmailPristine);
+        if(this.state.teacherStudentComponent.individualStudentTeacherEditEmailPristine) {
             this.setState(prevState => ({
                 teacherStudentComponent: {
                     ...prevState.teacherStudentComponent,
@@ -111,6 +116,8 @@ export class TeacherDashboard extends React.Component {
     }
 
     onBlurhandleIndividualStudentTeacherEditEmailChange = (e) => {
+        console.log("in onBlurhandleIndividualStudentTeacherEditEmailChange ");
+        console.log("this.state.teacherStudentComponent.individualStudentTeacherEditEmail " + this.state.teacherStudentComponent.individualStudentTeacherEditEmail);
         if(!this.validateEmail(this.state.teacherStudentComponent.individualStudentTeacherEditEmail)) {
             this.setState(prevState => ({
                 teacherStudentComponent: {
@@ -164,6 +171,56 @@ export class TeacherDashboard extends React.Component {
     }
     /* End Grade Level */
     
+    /* Password */
+    handleIndividualStudentTeacherEditPasswordChange = (e) => {
+        console.log("in handleIndividualStudentTeacherPasswordChange");
+        const target = e.target;
+        const value = target.value;
+        console.log("value being set for handleIndividualStudentTeacherPasswordChange" + value);
+        console.log("this.state.individualStudentTeacherEditPasswordPristine: " + this.state.individualStudentTeacherEditPasswordPristine);
+        if(this.state.teacherStudentComponent.individualStudentTeacherEditPasswordPristine) {
+            console.log("in conditional for individualStudentTeacherEditPasswordPristine");
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    individualStudentTeacherEditPassword: value,
+                }
+            }));
+        } else {
+            if(value.length >= 6) {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        individualStudentTeacherEditPassword: value,
+                        individualStudentTeacherEditPasswordError: null,
+                    }
+                }));
+            } else {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        individualStudentTeacherEditPassword: value,
+                        individualStudentTeacherEditPasswordError: true,
+                    }
+                }));
+            }
+        }
+    }
+
+    onBlurhandleIndividualStudentTeacherEditPasswordChange = (e) => {
+        console.log("I'm in this biatch..");
+        if(this.state.teacherStudentComponent.individualStudentTeacherEditPassword.length < 6) {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    individualStudentTeacherEditPasswordError: true,
+                    individualStudentTeacherEditPasswordPristine: false,
+                }
+            }));
+        }
+    }
+
+    /* End Password */
     /* Name */
     handleIndividualStudentTeacherEditNameChange = (e) => {
         console.log("in handleIndividualStudentTeacherEditNameChange");
@@ -478,9 +535,11 @@ export class TeacherDashboard extends React.Component {
                         handleIndividualStudentTeacherEditNameChange={this.handleIndividualStudentTeacherEditNameChange}
                         onBlurhandleIndividualStudentTeacherEditNameChange={this.onBlurhandleIndividualStudentTeacherEditNameChange}
                         handleIndividualStudentTeacherEditEmailChange={this.handleIndividualStudentTeacherEditEmailChange}
-                        onBlurhandleIndividualStudentTeacherEditEmailChange={this.handleIndividualStudentTeacherEditEmailChange}
+                        onBlurhandleIndividualStudentTeacherEditEmailChange={this.onBlurhandleIndividualStudentTeacherEditEmailChange}
                         handleIndividualStudentTeacherEditGradeChange={this.handleIndividualStudentTeacherEditGradeChange}
                         onBlurhandleIndividualStudentTeacherEditGradeChange={this.onBlurhandleIndividualStudentTeacherEditGradeChange}
+                        handleIndividualStudentTeacherEditPasswordChange={this.handleIndividualStudentTeacherEditPasswordChange}
+                        onBlurhandleIndividualStudentTeacherEditPasswordChange={this.onBlurhandleIndividualStudentTeacherEditPasswordChange}
                     />
                 </div>
             </React.Fragment>
