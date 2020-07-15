@@ -4,9 +4,9 @@ import Nav from '../components/nav';
 import { withRedux } from '../lib/redux'
 import { auth, firebase } from '../src/firebase';
 import Router from 'next/router';
-import { Card } from 'antd';
+import { Card, Form, Input, Button, Checkbox, Row, Col } from 'antd';
 import stylesheet from 'antd/dist/antd.min.css';
-
+import { MailOutlined, LockOutlined, GoogleCircleFilled } from '@ant-design/icons';
 
 class SignIn extends React.Component {
   constructor(props) {
@@ -173,76 +173,92 @@ class SignIn extends React.Component {
   render() {
     return (
       <React.Fragment>
-        <div>
-        <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
-        <Card title="Card title" bordered={false} style={{ width: 300 }}>
-          <p>Card content</p>
-          <p>Card content</p>
-          <p>Card content</p>
-        </Card>
-          <div className="row">
-            <Link href="/sign_up">
-              <a className="card">
-                <p>Sign up</p>
-              </a>
-            </Link>
-            <button onClick={this.handleSignInWithGoogle}>Sign In using google</button>
-          </div>
-          <div className="row">
-            <a className="card">
-              <form>
-                Email:<br/>
-                <input
-                  type="email"
-                  name="Email"
-                  label='Email'
-                  placeholder="Email"
+      <style dangerouslySetInnerHTML={{ __html: stylesheet}}/>
+      <Row type= "flex" align="middle" justify="center" style={{minHeight: '100vh', backgroundColor: '#F2F6FF'}}>
+        <Col span={8} align="center">
+          <Card title={<span style={{color: '#60789B'}}>Sign In</span>}>
+            <Form>
+              {this.state.validationEmailError.message ?
+                <Form.Item
+                  validateStatus='error'
+                  help='Invalid Email'>
+                <Input
+                  size='medium'
+                  type='email'
+                  placeholder='Email'
+                  prefix={<MailOutlined style={{color: '#267FFF'}}/>}
                   value={this.state.clientEmail}
-                  onChange={(event)=>this.handleEmail(event)}
-                  onBlur={() => this.onBlurHandleEmail()}
-                />
-                <p>
-                {
-                  this.state.validationEmailError ?
-                  this.state.validationEmailError.message :
-                  null
-                 }
-                </p>
-                <br/>
-                Password:<br/>
-                <input
-                  type="password"
-                  name="psw"
-                  label='Password'
+                  onChange = {(e) => this.handleEmail(e)}
+                  onBlur= {() => this.onBlurHandleEmail()}>
+                </Input>
+                </Form.Item>
+                :
+                <Form.Item>
+                <Input
+                size='medium'
+                type='email'
+                placeholder='Email'
+                prefix={<MailOutlined style={{color: '#267FFF'}}/>}
+                value={this.state.clientEmail}
+                onBlur= {() => this.onBlurHandleEmail()}
+                onChange = {(e) => this.handleEmail(e)}>
+                </Input>
+                </Form.Item>
+              }
+              {this.state.validationPasswordError.message ?
+                <Form.Item
+                  validateStatus='error'
+                  help='Minimum of 6 Characters Required'>
+                <Input
+                  size='medium'
+                  type='email'
                   placeholder='Password'
-                  onChange={(event) => this.handlePassword(event)}
-                  onBlur={() => this.onBlurHandlePassword()}
-                  error={this.state.validationPasswordError.message}
-                />
-                {
-                  this.state.validationPasswordError ?
-                  this.state.validationPasswordError.message :
-                  null
-                 }
-                <br/>
-                {
-                  this.state.loading ?
-                  <p>Loading...</p> :
-                  <button
-                    content='Login'
-                    onClick={() => this.handleClick(event)}>
-                    Login
-                  </button>
-                }
-                {
-                  this.state.showServerSideError ?
-                  this.state.showServerSideError.message :
-                  null
-                }
-              </form>
-            </a>
-          </div>
-        </div>
+                  prefix={<LockOutlined style={{color: '#267FFF'}}/>}
+                  value={this.state.clientPassword}
+                  onChange = {(e) => this.handlePassword(e)}
+                  onBlur= {() => this.onBlurHandlePassword()}>
+                </Input>
+                </Form.Item>
+                :
+                <Form.Item>
+                <Input
+                size='medium'
+                type='password'
+                placeholder='Password'
+                prefix={<LockOutlined style={{color: '#267FFF'}}/>}
+                value={this.state.clientPassword}
+                onBlur= {() => this.onBlurHandlePassword()}
+                onChange = {(e) => this.handlePassword(e)}>
+                </Input>
+                </Form.Item>
+              }
+              <Form.Item>
+                <Button
+                  type="primary" block
+                  shape="round"
+                  onClick={(e) => this.handleClick(e)}>
+                  Login
+                </Button>
+              </Form.Item>
+              <Form.Item>
+                <p> or sign in with </p>
+                <Button
+                  type="primary" block
+                  shape="round"
+                  style={{background: '#F2F6FF', border: 'none', color: '#4E6991'}}
+                  icon={<GoogleCircleFilled style={{color: '#267FFF'}}/>}
+                  onClick={this.handleSignInWithGoogle}>
+                  Google
+                </Button>
+              </Form.Item>
+              <span> Don't have an account yet? </span>
+              <Link href="/sign_up">
+                <a>Sign up</a>
+              </Link>
+            </Form>
+          </Card>
+        </Col>
+      </Row>
       </React.Fragment>
     )
   }
