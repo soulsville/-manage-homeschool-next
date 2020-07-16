@@ -48,6 +48,8 @@ export class TeacherDashboard extends React.Component {
                 individualStudentTeacherEditPassword: "",
                 individualStudentTeacherEditPasswordError: null,
                 individualStudentTeacherEditPasswordPristine: true,
+                individualStudentTeacherProfilePicFile: null,
+                individualStudentTeacherEditUpdateButtonError: null,
             },
         }
         this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -66,6 +68,8 @@ export class TeacherDashboard extends React.Component {
         this.onBlurhandleIndividualStudentTeacherEditGradeChange = this.onBlurhandleIndividualStudentTeacherEditGradeChange.bind(this);
         this.handleIndividualStudentTeacherEditPasswordChange = this.handleIndividualStudentTeacherEditPasswordChange.bind(this);
         this.onBlurhandleIndividualStudentTeacherEditPasswordChange = this.onBlurhandleIndividualStudentTeacherEditPasswordChange.bind(this);
+        this.handleIndividualStudentTeacherEditImageChange = this.handleIndividualStudentTeacherEditImageChange.bind(this);
+        this.handleIndividualStudentTeacherUpload = this.handleIndividualStudentTeacherUpload.bind(this);
     }
 
     componentDidMount() {
@@ -262,6 +266,51 @@ export class TeacherDashboard extends React.Component {
     }
     /* End Name */
 
+    /* Image */
+    handleIndividualStudentTeacherEditImageChange = (e) => {
+        console.log("in the handleIndividualStudentTeacherEditImageChange");
+        if (e.target.files[0]) {
+            const image = e.target.files[0];
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    individualStudentTeacherProfilePicFile: image,
+                }
+            }));
+        }
+    }
+    /* End Image */
+
+    /* Update Button */ 
+    handleIndividualStudentTeacherUpload = (e) => {
+        e.preventDefault();
+        // TODO: add loading after the if condition as well if all of them are in the original state value and 
+        // null than don't do anything and pop up an error that nothing changed
+        // if not all of them are with the original value than that means that something changed and send it to backend to figure out
+        // what changed and if it requires creating a new password for a user or changing an email for user, or a new pic, etc.
+        // if(null(false)){}else =>
+        if(this.state.teacherStudentComponent.individualStudentTeacherEditName || 
+           this.state.teacherStudentComponent.individualStudentTeacherEditEmail ||
+           this.state.teacherStudentComponent.individualStudentTeacherEditGrade ||
+           this.state.teacherStudentComponent.individualStudentTeacherEditPassword ||
+           this.state.teacherStudentComponent.individualStudentTeacherProfilePicFile){
+            // TODO: call the backend api here
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    individualStudentTeacherEditUpdateButtonError: false,
+                }
+            }));
+        } else {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    individualStudentTeacherEditUpdateButtonError: true,
+                }
+            }));
+        }
+    }
+    /* Update Button */ 
     /* individualStudentTeacherEdit component functions  end */
 
     /* teacherStudentComponent functions */
@@ -540,6 +589,8 @@ export class TeacherDashboard extends React.Component {
                         onBlurhandleIndividualStudentTeacherEditGradeChange={this.onBlurhandleIndividualStudentTeacherEditGradeChange}
                         handleIndividualStudentTeacherEditPasswordChange={this.handleIndividualStudentTeacherEditPasswordChange}
                         onBlurhandleIndividualStudentTeacherEditPasswordChange={this.onBlurhandleIndividualStudentTeacherEditPasswordChange}
+                        handleIndividualStudentTeacherEditImageChange={this.handleIndividualStudentTeacherEditImageChange}
+                        handleIndividualStudentTeacherUpload={this.handleIndividualStudentTeacherUpload}
                     />
                 </div>
             </React.Fragment>

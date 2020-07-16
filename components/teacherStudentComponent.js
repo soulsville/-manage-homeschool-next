@@ -90,6 +90,8 @@ export default class TeacherStudentComponent extends React.Component {
                     onBlurhandleIndividualStudentTeacherEditGradeChange={this.props.onBlurhandleIndividualStudentTeacherEditGradeChange}
                     handleIndividualStudentTeacherEditPasswordChange={this.props.handleIndividualStudentTeacherEditPasswordChange}
                     onBlurhandleIndividualStudentTeacherEditPasswordChange={this.props.onBlurhandleIndividualStudentTeacherEditPasswordChange}
+                    handleIndividualStudentTeacherEditImageChange={this.props.handleIndividualStudentTeacherEditImageChange}
+                    handleIndividualStudentTeacherUpload={this.props.handleIndividualStudentTeacherUpload}
                    />
             // displayName: "asdlkfj 89234"
             // email: "alskdjf@gmail.com"
