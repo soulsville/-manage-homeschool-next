@@ -1,8 +1,10 @@
 import React from 'react';
-import { Form, Input, Card, Button, Avatar, Space } from 'antd';
+import { Form, Input, Card, Button, Avatar, Space, Upload, Alert} from 'antd';
 
 import stylesheet from 'antd/dist/antd.min.css';
 const { Meta } = Card;
+import { EditOutlined } from '@ant-design/icons';
+
 
 
 export default class TeacherEditStudentComponent extends React.Component {
@@ -156,22 +158,47 @@ export default class TeacherEditStudentComponent extends React.Component {
         return(
             <Button type="primary" size="large"
             style={{ float: 'right' }}
+            onClick={(e) => this.props.handleIndividualStudentTeacherUpload(e)}
             >
                 Update
             </Button>
         )
     }
 
+    updateButtonError = () => {
+        if(this.props.teacherStudentComponent.individualStudentTeacherEditUpdateButtonError){
+            return(
+                <div>
+                    <Space size="middle"/>
+                    <Alert message="No changes detected" type="error" />
+                </div>
+            )
+        }
+
+    }
+
     render() {
+        // TODO: finish up the avatar, wire up the update and back button, create the cloudfunction for updating students profile
         return (
             <React.Fragment>
                 <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
                 <Card style={{ width: "auto", display: "block" }}>
-                <Meta title="Card title" avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}/>
+                <Meta 
+                 title={this.props.individualEditStudentInformation.data.data.displayName ? 
+                        this.props.individualEditStudentInformation.data.data.displayName :
+                        this.props.individualEditStudentInformation.data.data.email
+                        }
+                 avatar={this.props.individualEditStudentInformation.data.data.photoURL ?
+                        <Upload onChange={(e)=>this.props.handleIndividualStudentTeacherEditImageChange(e)}><Button size="small" style={{border: "none"}}><Avatar src={this.props.individualEditStudentInformation.data.data.photoURL}/><EditOutlined /></Button></Upload> :
+                        <Upload onChange={(e)=>this.props.handleIndividualStudentTeacherEditImageChange(e)}><Button size="small" style={{border: "none"}}><Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/><EditOutlined /></Button></Upload>
+                        }
+                />
                     <Space/>
                     <Space/>
                     <br/>
                     <Form name="student_information">
+                        <Space/>
+                        {this.updateButtonError()}
                         {this.nameFormItemComponent()}
                         {this.emailFormItemComponent()}
                         {this.gradeFormItemComponent()}
