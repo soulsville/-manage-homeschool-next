@@ -1,7 +1,7 @@
 import React from 'react';
 import withAuth from '../src/helpers/withAuth';
 import ErrorPage from 'next/error'
-import { db, storage, functions } from "../src/firebase";
+import { db, storage, functions, firebase } from "../src/firebase";
 import Router from 'next/router';
 import Nav from '../components/nav';
 import stylesheet from 'antd/dist/antd.min.css';
@@ -50,6 +50,7 @@ export class TeacherDashboard extends React.Component {
                 individualStudentTeacherEditPasswordPristine: true,
                 individualStudentTeacherProfilePicFile: null,
                 individualStudentTeacherEditUpdateButtonError: null,
+                individualStudentTeacherEditUpdateButtonLoading: false,
             },
         }
         this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -267,18 +268,50 @@ export class TeacherDashboard extends React.Component {
     /* End Name */
 
     /* Image */
-    handleIndividualStudentTeacherEditImageChange = (e) => {
-        console.log("in the handleIndividualStudentTeacherEditImageChange");
-        if (e.target.files[0]) {
-            const image = e.target.files[0];
-            this.setState(prevState => ({
-                teacherStudentComponent: {
-                    ...prevState.teacherStudentComponent,
-                    individualStudentTeacherProfilePicFile: image,
-                }
-            }));
+    handleIndividualStudentTeacherEditImageChange = ({ onError, onSuccess, file }) => {
+        console.log("in handleIndividualStudentTeacherEditImageChange");
+        const metadata = {
+            contentType: 'image/jpeg'
         }
+        const storageRef = storage.ref();
+        const imageName = `${this.state.teacherStudentComponent.individualEditStudentInformation.data.data.uid}/photoURL/${file.name}`
+        const imgFile = storageRef.child(`images/${imageName}.png`);
+        try {
+            const uploadTask = imgFile.put(file, metadata);
+            uploadTask.on('state_changed', function(snapshot){
+                // Observe state change events such as progress, pause, and resume
+                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+                switch (snapshot.state) {
+                  case firebase.storage.TaskState.PAUSED: // or 'paused'
+                    console.log('Upload is paused');
+                    break;
+                  case firebase.storage.TaskState.RUNNING: // or 'running'
+                    console.log('Upload is running');
+                    break;
+                }
+              }, function(error) {
+                // Handle unsuccessful uploads
+              }, function() {
+                // Handle successful uploads on complete
+                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                  console.log('File available at', downloadURL);
+                });
+            });
+            // onSuccess(null, image);
+        } catch(e) {
+            setTimeout(() => {
+                onError("error");
+            }, 0);
+        }
+        
+        setTimeout(() => {
+            onSuccess("ok");
+        }, 0);
     }
+
     /* End Image */
 
     /* Update Button */ 
@@ -289,18 +322,94 @@ export class TeacherDashboard extends React.Component {
         // if not all of them are with the original value than that means that something changed and send it to backend to figure out
         // what changed and if it requires creating a new password for a user or changing an email for user, or a new pic, etc.
         // if(null(false)){}else =>
+        console.log("this.state.teacherStudentComponent.individualStudentTeacherProfilePicFile: " + this.state.teacherStudentComponent.individualStudentTeacherProfilePicFile);
         if(this.state.teacherStudentComponent.individualStudentTeacherEditName || 
            this.state.teacherStudentComponent.individualStudentTeacherEditEmail ||
            this.state.teacherStudentComponent.individualStudentTeacherEditGrade ||
            this.state.teacherStudentComponent.individualStudentTeacherEditPassword ||
            this.state.teacherStudentComponent.individualStudentTeacherProfilePicFile){
-            // TODO: call the backend api here
             this.setState(prevState => ({
                 teacherStudentComponent: {
                     ...prevState.teacherStudentComponent,
                     individualStudentTeacherEditUpdateButtonError: false,
+                    individualStudentTeacherEditUpdateButtonLoading: true,
                 }
             }));
+            console.log("this.state.individualEditStudentInformation: " + this.state.teacherStudentComponent.individualEditStudentInformation);
+            let displayName = this.state.teacherStudentComponent.individualEditStudentInformation.data.data.displayName;
+            let requireStudentNameUpdate = false;
+            let email = this.state.teacherStudentComponent.individualEditStudentInformation.data.data.email;
+            let requireStudentEmailUpdate = false;
+            let currentGradeLevel = this.state.teacherStudentComponent.individualEditStudentInformation.data.data.currentGradeLevel;
+            let requireStudentGradeUpdate = false;
+            let requireStudentPasswordUpdate = false;
+            let studentProfilePicFile = this.state.teacherStudentComponent.individualEditStudentInformation.data.data.photoURL;
+            let requireStudentProfilePicFileUpdate = false;
+            if(this.state.teacherStudentComponent.individualStudentTeacherEditName){
+                displayName = this.state.teacherStudentComponent.individualStudentTeacherEditName;
+                requireStudentNameUpdate = true;
+            }
+
+            if(this.state.teacherStudentComponent.individualStudentTeacherEditEmail){
+                email = this.state.teacherStudentComponent.individualStudentTeacherEditEmail;
+                requireStudentEmailUpdate = true;
+            }
+
+            if(this.state.teacherStudentComponent.individualStudentTeacherEditGrade){
+                currentGradeLevel = this.state.teacherStudentComponent.individualStudentTeacherEditGrade;
+                requireStudentGradeUpdate = true;
+            }
+
+            if(this.state.teacherStudentComponent.individualStudentTeacherEditPassword){
+                requireStudentPasswordUpdate = true;
+            }
+            
+            if(this.state.teacherStudentComponent.individualStudentTeacherProfilePicFile){
+                studentProfilePicFile = this.state.teacherStudentComponent.individualStudentTeacherProfilePicFile;
+                requireStudentProfilePicFileUpdate = true;
+            }
+            if(requireStudentEmailUpdate || requireStudentPasswordUpdate) {
+                const updateStudentEmailPasswordAsTeacher = functions.httpsCallable('updateStudentEmailPasswordAsTeacher');
+                updateStudentEmailPasswordAsTeacher({
+                    uid: this.state.currentUserDoc.uid,
+                    studentUid: this.state.teacherStudentComponent.individualEditStudentInformation.data.data.uid,
+                    requireStudentEmailUpdate: requireStudentEmailUpdate,
+                    requireStudentPasswordUpdate: requireStudentPasswordUpdate,
+                    email: email,
+                    password: this.state.teacherStudentComponent.individualStudentTeacherEditPassword,
+                }).then(result => {
+                    console.log('update sucessful for email and password as teacher' + result);
+                }).catch(err => {
+                    console.log(err)
+                })
+            }
+            if(requireStudentProfilePicFileUpdate) {
+                const updateStudentProfilePicAsTeacher = functions.httpsCallable('updateStudentProfilePicAsTeacher');
+                updateStudentProfilePicAsTeacher({
+                    uid: this.state.currentUserDoc.uid,
+                    studentUid: this.state.teacherStudentComponent.individualEditStudentInformation.data.data.uid,
+                    file: studentProfilePicFile,
+                }).then(result => {
+                    console.log('update sucessfully updateStudentProfilePicAsTeacher: ' + result);
+                }).catch(err => {
+                    console.log(err)
+                }); 
+            }
+            if(requireStudentNameUpdate || requireStudentGradeUpdate) {
+                const updateStudentNameGradeAsTeacher = functions.httpsCallable('updateStudentNameGradeAsTeacher');
+                updateStudentNameGradeAsTeacher({
+                    uid: this.state.currentUserDoc.uid,
+                    studentUid: this.state.teacherStudentComponent.individualEditStudentInformation.data.data.uid,
+                    displayName: displayName,
+                    currentGradeLevel: currentGradeLevel,
+                    requireStudentNameUpdate: requireStudentNameUpdate,
+                    requireStudentGradeUpdate: requireStudentGradeUpdate,
+                }).then(result => {
+                    console.log('update sucessfully updateStudentNameGradeAsTeacher: ' + JSON.stringify(result));
+                }).catch(err => {
+                    console.log(err)
+                });
+            }
         } else {
             this.setState(prevState => ({
                 teacherStudentComponent: {
@@ -310,7 +419,7 @@ export class TeacherDashboard extends React.Component {
             }));
         }
     }
-    /* Update Button */ 
+    /* Update Button End */ 
     /* individualStudentTeacherEdit component functions  end */
 
     /* teacherStudentComponent functions */
