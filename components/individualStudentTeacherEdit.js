@@ -185,7 +185,6 @@ export default class TeacherEditStudentComponent extends React.Component {
 
     render() {
         // TODO: finish up the avatar, wire up the update and back button, create the cloudfunction for updating students profile
-        const preventRequest = () => true;
         return (
             <React.Fragment>
                 <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
@@ -196,8 +195,8 @@ export default class TeacherEditStudentComponent extends React.Component {
                         this.props.individualEditStudentInformation.data.data.email
                         }
                  avatar={this.props.individualEditStudentInformation.data.data.photoURL ?
-                        <Upload customRequest={this.props.handleIndividualStudentTeacherEditImageChange} beforeUpload={preventRequest}><Button size="small" style={{border: "none"}}><Avatar src={this.props.individualEditStudentInformation.data.data.photoURL}/><UploadOutlined /></Button></Upload> :
-                        <Upload customRequest={this.props.handleIndividualStudentTeacherEditImageChange} beforeUpload={preventRequest}><Button size="small" style={{border: "none"}}><Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/><UploadOutlined /></Button></Upload>
+                        <Upload customRequest={this.props.handleIndividualStudentTeacherEditImageChange}><Button size="small" style={{border: "none"}}><Avatar src={this.props.individualEditStudentInformation.data.data.photoURL}/><UploadOutlined /></Button></Upload> :
+                        <Upload customRequest={this.props.handleIndividualStudentTeacherEditImageChange}><Button size="small" style={{border: "none"}}><Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/><UploadOutlined /></Button></Upload>
                         }
                 />
                     <Space/>
