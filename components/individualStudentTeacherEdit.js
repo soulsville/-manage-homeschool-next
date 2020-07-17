@@ -1,9 +1,9 @@
 import React from 'react';
-import { Form, Input, Card, Button, Avatar, Space, Upload, Alert} from 'antd';
+import { Form, Input, Card, Button, Avatar, Space, Upload, Alert, Spin} from 'antd';
 
 import stylesheet from 'antd/dist/antd.min.css';
 const { Meta } = Card;
-import { EditOutlined } from '@ant-design/icons';
+import { UploadOutlined, LoadingOutlined } from '@ant-design/icons';
 
 
 
@@ -155,14 +155,21 @@ export default class TeacherEditStudentComponent extends React.Component {
     }
 
     updateButtonComponent = () => {
-        return(
-            <Button type="primary" size="large"
-            style={{ float: 'right' }}
-            onClick={(e) => this.props.handleIndividualStudentTeacherUpload(e)}
-            >
-                Update
-            </Button>
-        )
+        if(this.props.teacherStudentComponent.individualStudentTeacherEditUpdateButtonLoading){
+            const antIcon = <LoadingOutlined style={{ fontSize: 50 }} spin />;
+            return(
+                <Spin indicator={antIcon} style={{ float: 'right' }} />
+            )
+        } else {
+            return(
+                <Button type="primary" size="large"
+                style={{ float: 'right' }}
+                onClick={(e) => this.props.handleIndividualStudentTeacherUpload(e)}
+                >
+                    Update
+                </Button>
+            )
+        }
     }
 
     updateButtonError = () => {
@@ -174,11 +181,11 @@ export default class TeacherEditStudentComponent extends React.Component {
                 </div>
             )
         }
-
     }
 
     render() {
         // TODO: finish up the avatar, wire up the update and back button, create the cloudfunction for updating students profile
+        const preventRequest = () => true;
         return (
             <React.Fragment>
                 <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
@@ -189,8 +196,8 @@ export default class TeacherEditStudentComponent extends React.Component {
                         this.props.individualEditStudentInformation.data.data.email
                         }
                  avatar={this.props.individualEditStudentInformation.data.data.photoURL ?
-                        <Upload onChange={(e)=>this.props.handleIndividualStudentTeacherEditImageChange(e)}><Button size="small" style={{border: "none"}}><Avatar src={this.props.individualEditStudentInformation.data.data.photoURL}/><EditOutlined /></Button></Upload> :
-                        <Upload onChange={(e)=>this.props.handleIndividualStudentTeacherEditImageChange(e)}><Button size="small" style={{border: "none"}}><Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/><EditOutlined /></Button></Upload>
+                        <Upload customRequest={this.props.handleIndividualStudentTeacherEditImageChange} beforeUpload={preventRequest}><Button size="small" style={{border: "none"}}><Avatar src={this.props.individualEditStudentInformation.data.data.photoURL}/><UploadOutlined /></Button></Upload> :
+                        <Upload customRequest={this.props.handleIndividualStudentTeacherEditImageChange} beforeUpload={preventRequest}><Button size="small" style={{border: "none"}}><Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/><UploadOutlined /></Button></Upload>
                         }
                 />
                     <Space/>
