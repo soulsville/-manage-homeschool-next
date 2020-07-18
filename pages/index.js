@@ -1,78 +1,88 @@
 import * as React from 'react';
-import stylesheet from 'antd/dist/antd.min.css'
+import stylesheet from 'antd/dist/antd.min.css';
+import Link from 'next/link';
+import {Card, Button, Layout, Avatar, Empty} from 'antd';
 
-import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 
-const { SubMenu } = Menu;
-const { Header, Content, Sider } = Layout;
+const { Header, Footer, Sider, Content } = Layout;
 
 export default class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.siderImage = this.siderImage.bind(this);
+    this.headerLogo = this.headerLogo.bind(this);
+  }
+  siderImage()  {
+    return <img src="/images/test.jpg"/>
+  }
+  headerLogo() {
+    return
+  }
   render() {
-    return <Layout>
-      <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
-      <style jsx>{`
-        #components-layout-demo-top-side-2 .logo {
-          width: 120px;
-          height: 31px;
-          background: #333;
-          border-radius: 6px;
-          margin: 16px 28px 16px 0;
-          float: left;
-        }
-      `}</style>
-
-      <Header className="header">
-        <div className="logo" />
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          defaultSelectedKeys={['2']}
-          style={{ lineHeight: '64px' }}
-        >
-          <Menu.Item key="1">nav 1</Menu.Item>
-          <Menu.Item key="2">nav 2</Menu.Item>
-          <Menu.Item key="3">nav 3</Menu.Item>
-        </Menu>
-      </Header>
+    return (
+      <React.Fragment>
+      <style dangerouslySetInnerHTML={{ __html: stylesheet }}/>
+      {/*Header starts here*/}
       <Layout>
-        <Sider width={200} style={{ background: '#fff' }}>
-          <Menu
-            mode="inline"
-            defaultSelectedKeys={['1']}
-            defaultOpenKeys={['sub1']}
-            style={{ height: '100%' }}
-          >
-            <SubMenu key="sub1" title={<span><Icon type="user" />subnav 1</span>}>
-              <Menu.Item key="1">option1</Menu.Item>
-              <Menu.Item key="2">option2</Menu.Item>
-              <Menu.Item key="3">option3</Menu.Item>
-              <Menu.Item key="4">option4</Menu.Item>
-            </SubMenu>
-            <SubMenu key="sub2" title={<span><Icon type="laptop" />subnav 2</span>}>
-              <Menu.Item key="5">option5</Menu.Item>
-              <Menu.Item key="6">option6</Menu.Item>
-              <Menu.Item key="7">option7</Menu.Item>
-              <Menu.Item key="8">option8</Menu.Item>
-            </SubMenu>
-            <SubMenu key="sub3" title={<span><Icon type="notification" />subnav 3</span>}>
-              <Menu.Item key="9">option9</Menu.Item>
-              <Menu.Item key="10">option10</Menu.Item>
-              <Menu.Item key="11">option11</Menu.Item>
-              <Menu.Item key="12">option12</Menu.Item>
-            </SubMenu>
-          </Menu>
-        </Sider>
-        <Layout style={{ padding: '0 24px 24px' }}>
-          <Breadcrumb style={{ margin: '12px 0' }}>
-            <Breadcrumb.Item>Home</Breadcrumb.Item>
-            <Breadcrumb.Item>List</Breadcrumb.Item>
-            <Breadcrumb.Item>App</Breadcrumb.Item>
-          </Breadcrumb>
-          <Content style={{ background: '#fff', padding: 24, margin: 0, minHeight: 280 }}>
-            Content
-          </Content>
-        </Layout>
+        <Header
+          style={{position: 'fixed',
+                  zIndex: 1,
+                  width: '100%',
+                  backgroundColor: "#FBEECA"}}>
+          {/*Sign Up Button*/}
+          <Button
+            type="link"
+            href="sign_up"
+            style={{float:'right',
+              marginLeft:"1.0rem",
+              marginTop:"1.0rem",
+              backgroundColor:"#004E56",
+              border: 'none',
+              color:"white"}}>
+              Sign Up
+          </Button>
+          {/*Login Button*/}
+          <Button
+            type="link"
+            href="/sign_in"
+            style={{float:'right',
+              marginTop:"1.0rem",
+              backgroundColor:"#004E56",
+              border: 'none',
+              color:"white"}}>
+              Login
+          </Button>
+          {/*Dog Header Mascot*/}
+          <a href="/">
+            <Avatar size={50} shape="square" src="/images/headerLogo.png" style={{float:'left', marginTop:"0.6rem", marginLeft:"-1.0rem"}}></Avatar>
+          </a>
+          {/*Header Title*/}
+          <a href="/">
+            <p style={{color: 'black', fontFamily: 'Marker Felt', fontSize: 'large', fontWeight: 'bold', float:'left', marginLeft:"0.5rem", marginTop:"0.3rem"}}> HomeSchoolZen </p>
+          </a>
+        </Header>
       </Layout>
-    </Layout>
+      <Card>
+        <p></p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+        <p>Card content</p>
+      </Card>
+      </React.Fragment>
+    )
   }
 }
