@@ -15,7 +15,7 @@ export default class TeacherEditStudentComponent extends React.Component {
     componentDidMount() {
         console.log("in TeacherEditStudentComponent class....");
         console.log(this.props.individualEditStudentInformation);
-        console.log(this.props.individualEditStudentInformation.data.data.displayName);
+        console.log(this.props.individualEditStudentInformation.displayName);
     }
 
     nameFormItemComponent = () => {
@@ -27,7 +27,7 @@ export default class TeacherEditStudentComponent extends React.Component {
                     validateStatus="error"
                     help="Student Name can't be empty">
                         <Input size="medium"
-                         defaultValue={this.props.individualEditStudentInformation.data.data.displayName}
+                         defaultValue={this.props.individualEditStudentInformation.displayName}
                          onChange={(event)=>this.props.handleIndividualStudentTeacherEditNameChange(event)}
                          onBlur={(event) => this.props.onBlurhandleIndividualStudentTeacherEditNameChange(event)}
                         />
@@ -40,7 +40,7 @@ export default class TeacherEditStudentComponent extends React.Component {
                     Name
                     <Form.Item>
                         <Input size="medium"
-                        defaultValue={this.props.individualEditStudentInformation.data.data.displayName}
+                        defaultValue={this.props.individualEditStudentInformation.displayName}
                         onChange={(event)=>this.props.handleIndividualStudentTeacherEditNameChange(event)}
                         onBlur={(event)=> this.props.onBlurhandleIndividualStudentTeacherEditNameChange(event)}
                         />
@@ -59,7 +59,7 @@ export default class TeacherEditStudentComponent extends React.Component {
                     validateStatus="error"
                     help="Please insert a valid Email">
                         <Input size="medium"
-                        defaultValue={this.props.individualEditStudentInformation.data.data.email}
+                        defaultValue={this.props.individualEditStudentInformation.email}
                         onChange={(event)=>this.props.handleIndividualStudentTeacherEditEmailChange(event)}
                         onBlur={(event)=>this.props.onBlurhandleIndividualStudentTeacherEditEmailChange(event)}
                         />
@@ -72,7 +72,7 @@ export default class TeacherEditStudentComponent extends React.Component {
                     Email
                     <Form.Item>
                         <Input size="medium"
-                        defaultValue={this.props.individualEditStudentInformation.data.data.email}
+                        defaultValue={this.props.individualEditStudentInformation.email}
                         onChange={(event)=>this.props.handleIndividualStudentTeacherEditEmailChange(event)}
                         onBlur={(event)=>this.props.onBlurhandleIndividualStudentTeacherEditEmailChange(event)}
                         />
@@ -91,7 +91,7 @@ export default class TeacherEditStudentComponent extends React.Component {
                     validateStatus="error"
                     help="Current grade can't be empty">
                         <Input size="medium"
-                         defaultValue={this.props.individualEditStudentInformation.data.data.currentGradeLevel}
+                         defaultValue={this.props.individualEditStudentInformation.currentGradeLevel}
                          onChange={(event)=>this.props.handleIndividualStudentTeacherEditGradeChange(event)}
                          onBlur={(event)=>this.props.onBlurhandleIndividualStudentTeacherEditGradeChange(event)}
                         />
@@ -104,7 +104,7 @@ export default class TeacherEditStudentComponent extends React.Component {
                     Current Grade
                     <Form.Item>
                         <Input size="medium"
-                         defaultValue={this.props.individualEditStudentInformation.data.data.currentGradeLevel}
+                         defaultValue={this.props.individualEditStudentInformation.currentGradeLevel}
                          onChange={(event)=>this.props.handleIndividualStudentTeacherEditGradeChange(event)}
                          onBlur={(event)=>this.props.onBlurhandleIndividualStudentTeacherEditGradeChange(event)}
                         />
@@ -190,12 +190,12 @@ export default class TeacherEditStudentComponent extends React.Component {
                 <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
                 <Card style={{ width: "auto", display: "block" }}>
                 <Meta 
-                 title={this.props.individualEditStudentInformation.data.data.displayName ? 
-                        this.props.individualEditStudentInformation.data.data.displayName :
-                        this.props.individualEditStudentInformation.data.data.email
+                 title={this.props.individualEditStudentInformation.displayName ? 
+                        this.props.individualEditStudentInformation.displayName :
+                        this.props.individualEditStudentInformation.email
                         }
-                 avatar={this.props.individualEditStudentInformation.data.data.photoURL ?
-                        <Upload customRequest={this.props.handleIndividualStudentTeacherEditImageChange}><Button size="small" style={{border: "none"}}><Avatar src={this.props.individualEditStudentInformation.data.data.photoURL}/><UploadOutlined /></Button></Upload> :
+                 avatar={this.props.individualEditStudentInformation.photoURL ?
+                        <Upload customRequest={this.props.handleIndividualStudentTeacherEditImageChange}><Button size="small" style={{border: "none"}}><Avatar src={this.props.individualEditStudentInformation.photoURL}/><UploadOutlined /></Button></Upload> :
                         <Upload customRequest={this.props.handleIndividualStudentTeacherEditImageChange}><Button size="small" style={{border: "none"}}><Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/><UploadOutlined /></Button></Upload>
                         }
                 />
