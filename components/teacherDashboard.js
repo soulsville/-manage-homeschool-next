@@ -11,9 +11,10 @@ export class TeacherDashboard extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            currentUser: this.props.authUser,
+            authUser: this.props.authUser,
             currentUserDoc: this.props.currentUserDoc,
             currentUserClicked: this.props.currentUserDoc,
+            teacherStudentRef: this.props.teacherStudentRef,
             studentClicked: false,
             attendanceOptionClicked: false,
             studentsOptionClicked: false,
@@ -32,6 +33,7 @@ export class TeacherDashboard extends React.Component {
             },
             teacherStudentComponent: {
                 currentUserDoc: this.props.currentUserDoc,
+                teacherStudentRef: this.props.teacherStudentRef,
                 // TODO: change this back to false testing really fast
                 // thnk about changing the email and password if they don't match
                 // the currently using one when editing student profiles
@@ -77,6 +79,9 @@ export class TeacherDashboard extends React.Component {
         console.log("in teacher dashboard class....");
         console.log(this.state.currentUserDoc);
         console.log(this.state.teacherStudentComponent.currentUserDoc);
+        console.log("in teacher dashboard class teacherStudentRef....");
+        console.log(this.state.teacherStudentRef.data);
+
     }
 
     /* individualStudentTeacherEdit component functions */
@@ -274,10 +279,11 @@ export class TeacherDashboard extends React.Component {
             contentType: 'image/jpeg'
         }
         const storageRef = storage.ref();
-        const imageName = `${this.state.teacherStudentComponent.individualEditStudentInformation.data.data.uid}/photoURL/${file.name}`
+        const imageName = `${this.state.teacherStudentComponent.individualEditStudentInformation.uid}/photoURL/${file.name}`
         const imgFile = storageRef.child(`images/${imageName}.png`);
         try {
             const uploadTask = imgFile.put(file, metadata);
+            const context = this;
             uploadTask.on('state_changed', function(snapshot){
                 // Observe state change events such as progress, pause, and resume
                 // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
@@ -298,6 +304,12 @@ export class TeacherDashboard extends React.Component {
                 // For instance, get the download URL: https://firebasestorage.googleapis.com/...
                 uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
                   console.log('File available at', downloadURL);
+                  context.setState(prevState => ({
+                        teacherStudentComponent: {
+                            ...prevState.teacherStudentComponent,
+                            individualStudentTeacherProfilePicFile: downloadURL,
+                        }
+                    }));
                 });
             });
             // onSuccess(null, image);
@@ -336,43 +348,49 @@ export class TeacherDashboard extends React.Component {
                 }
             }));
             console.log("this.state.individualEditStudentInformation: " + this.state.teacherStudentComponent.individualEditStudentInformation);
-            let displayName = this.state.teacherStudentComponent.individualEditStudentInformation.data.data.displayName;
+            let displayName = this.state.teacherStudentComponent.individualEditStudentInformation.displayName;
             let requireStudentNameUpdate = false;
-            let email = this.state.teacherStudentComponent.individualEditStudentInformation.data.data.email;
+            let email = this.state.teacherStudentComponent.individualEditStudentInformation.email;
             let requireStudentEmailUpdate = false;
-            let currentGradeLevel = this.state.teacherStudentComponent.individualEditStudentInformation.data.data.currentGradeLevel;
+            let currentGradeLevel = this.state.teacherStudentComponent.individualEditStudentInformation.currentGradeLevel;
             let requireStudentGradeUpdate = false;
             let requireStudentPasswordUpdate = false;
-            let studentProfilePicFile = this.state.teacherStudentComponent.individualEditStudentInformation.data.data.photoURL;
+            let studentProfilePicFile = this.state.teacherStudentComponent.individualEditStudentInformation.photoURL;
             let requireStudentProfilePicFileUpdate = false;
+            let updateCalls = 0;
             if(this.state.teacherStudentComponent.individualStudentTeacherEditName){
                 displayName = this.state.teacherStudentComponent.individualStudentTeacherEditName;
                 requireStudentNameUpdate = true;
+                updateCalls += 1;
             }
 
             if(this.state.teacherStudentComponent.individualStudentTeacherEditEmail){
                 email = this.state.teacherStudentComponent.individualStudentTeacherEditEmail;
                 requireStudentEmailUpdate = true;
+                updateCalls += 1;
             }
 
             if(this.state.teacherStudentComponent.individualStudentTeacherEditGrade){
                 currentGradeLevel = this.state.teacherStudentComponent.individualStudentTeacherEditGrade;
                 requireStudentGradeUpdate = true;
+                updateCalls += 1;
             }
 
             if(this.state.teacherStudentComponent.individualStudentTeacherEditPassword){
                 requireStudentPasswordUpdate = true;
+                updateCalls += 1;
             }
             
             if(this.state.teacherStudentComponent.individualStudentTeacherProfilePicFile){
                 studentProfilePicFile = this.state.teacherStudentComponent.individualStudentTeacherProfilePicFile;
                 requireStudentProfilePicFileUpdate = true;
+                updateCalls += 1;
             }
             if(requireStudentEmailUpdate || requireStudentPasswordUpdate) {
                 const updateStudentEmailPasswordAsTeacher = functions.httpsCallable('updateStudentEmailPasswordAsTeacher');
                 updateStudentEmailPasswordAsTeacher({
                     uid: this.state.currentUserDoc.uid,
-                    studentUid: this.state.teacherStudentComponent.individualEditStudentInformation.data.data.uid,
+                    studentUid: this.state.teacherStudentComponent.individualEditStudentInformation.uid,
                     requireStudentEmailUpdate: requireStudentEmailUpdate,
                     requireStudentPasswordUpdate: requireStudentPasswordUpdate,
                     email: email,
@@ -387,8 +405,8 @@ export class TeacherDashboard extends React.Component {
                 const updateStudentProfilePicAsTeacher = functions.httpsCallable('updateStudentProfilePicAsTeacher');
                 updateStudentProfilePicAsTeacher({
                     uid: this.state.currentUserDoc.uid,
-                    studentUid: this.state.teacherStudentComponent.individualEditStudentInformation.data.data.uid,
-                    file: studentProfilePicFile,
+                    studentUid: this.state.teacherStudentComponent.individualEditStudentInformation.uid,
+                    photoURL: studentProfilePicFile,
                 }).then(result => {
                     console.log('update sucessfully updateStudentProfilePicAsTeacher: ' + result);
                 }).catch(err => {
@@ -399,7 +417,7 @@ export class TeacherDashboard extends React.Component {
                 const updateStudentNameGradeAsTeacher = functions.httpsCallable('updateStudentNameGradeAsTeacher');
                 updateStudentNameGradeAsTeacher({
                     uid: this.state.currentUserDoc.uid,
-                    studentUid: this.state.teacherStudentComponent.individualEditStudentInformation.data.data.uid,
+                    studentUid: this.state.teacherStudentComponent.individualEditStudentInformation.uid,
                     displayName: displayName,
                     currentGradeLevel: currentGradeLevel,
                     requireStudentNameUpdate: requireStudentNameUpdate,
@@ -433,22 +451,34 @@ export class TeacherDashboard extends React.Component {
                 individualStudentEditLoading: true
             }
         }));
-        const getStudentDocumentAsTeacher = functions.httpsCallable('getStudentDocumentAsTeacher');
-        getStudentDocumentAsTeacher({
-            uid: this.state.currentUserDoc.uid,
-            studentUid: e.uid,
-        }).then(result => {
-            this.setState(prevState => ({
-                teacherStudentComponent: {
-                    ...prevState.teacherStudentComponent,
-                    individualStudentEditClicked: true,
-                    individualEditStudentInformation: result,
-                    individualStudentEditLoading: false,
-                }
-            }));
-        }).catch(err => {
-            console.log(err)
-        })
+        this.state.teacherStudentComponent.teacherStudentRef.data.forEach((student) => {
+            if(student.uid === e.uid) {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        individualStudentEditClicked: true,
+                        individualEditStudentInformation: student,
+                        individualStudentEditLoading: false,
+                    }
+                }));
+            }
+        });
+        // const getStudentDocumentAsTeacher = functions.httpsCallable('getStudentDocumentAsTeacher');
+        // getStudentDocumentAsTeacher({
+        //     uid: this.state.currentUserDoc.uid,
+        //     studentUid: e.uid,
+        // }).then(result => {
+        //     this.setState(prevState => ({
+        //         teacherStudentComponent: {
+        //             ...prevState.teacherStudentComponent,
+        //             individualStudentEditClicked: true,
+        //             individualEditStudentInformation: result,
+        //             individualStudentEditLoading: false,
+        //         }
+        //     }));
+        // }).catch(err => {
+        //     console.log(err)
+        // });
     }
 
     /* teacherStudentComponent functions end */
@@ -682,6 +712,7 @@ export class TeacherDashboard extends React.Component {
                         attendanceComponent={this.state.attendanceComponent}
                         studentsOptionClicked={this.state.studentsOptionClicked}
                         teacherStudentComponent={this.state.teacherStudentComponent}
+                        teacherStudentRef={this.state.teacherStudentRef}
                         teacherStudentComponentHandleTeacherStudentClick={this.teacherStudentComponentHandleTeacherStudentClick}
                         handleMenuClick={this.handleMenuClick}
                         studentAttendanceSubmitClicked={this.studentAttendanceSubmitClicked}

@@ -118,6 +118,8 @@ import TeacherStudentComponent from '../components/teacherStudentComponent';
 export default class Nav extends React.Component {
     constructor(props) {
         super(props);
+        this.subMenuComponent = this.subMenuComponent.bind(this);
+        this.showTeacherInOptions = this.showTeacherInOptions.bind(this);
     }
 
     componentDidMount() {
@@ -170,6 +172,10 @@ export default class Nav extends React.Component {
         }
     }
 
+    subMenuComponent = () => {
+
+    }
+
     render() {
         return (
             <React.Fragment>
@@ -198,13 +204,13 @@ export default class Nav extends React.Component {
                                     }
                                 >
                                     {
-                                        this.props.currentUserDoc.teacherStudents ?
-                                        this.props.currentUserDoc.teacherStudents.map(function(d, idx){
+                                        this.props.teacherStudentRef.data ?
+                                        this.props.teacherStudentRef.data.map(function(d, idx){
                                         return (
                                             <Menu.Item key={idx}>
                                                 {
-                                                    d.fullName ?
-                                                    d.fullName :
+                                                    d.displayName ?
+                                                    d.displayName :
                                                     d.email
                                                 }
                                             </Menu.Item>

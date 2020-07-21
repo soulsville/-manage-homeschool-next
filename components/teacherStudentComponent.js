@@ -25,10 +25,11 @@ export default class TeacherStudentComponent extends React.Component {
     componentDidMount() {
         console.log("in teacherStudent component....");
         console.log(this.props.teacherStudentComponent.currentUserDoc);
+        console.log(this.props.teacherStudentComponent.teacherStudentRef.data);
     }
 
     titleComponent = () => {
-        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentComponent.currentUserDoc.teacherStudents && !this.props.teacherStudentComponent.individualStudentEditClicked){
+        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentComponent.teacherStudentRef.data && !this.props.teacherStudentComponent.individualStudentEditClicked){
             return(
                 <Title level={2} style={{float: "left"}}>All Students</Title>
             )
@@ -36,7 +37,7 @@ export default class TeacherStudentComponent extends React.Component {
     }
 
     addStudentsButtonComponent = () => {
-        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentComponent.currentUserDoc.teacherStudents && !this.props.teacherStudentComponent.individualStudentEditClicked){
+        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentComponent.teacherStudentRef.data && !this.props.teacherStudentComponent.individualStudentEditClicked){
             return(
                 <Button type="primary" icon={<FolderAddTwoTone />} size="default" style={{marginLeft: 40}}>
                     Add Students
@@ -47,14 +48,14 @@ export default class TeacherStudentComponent extends React.Component {
 
     showStudentsComponent = (context) => {
         console.log("in teacherStudentComponent");
-        console.log(this.props.teacherStudentComponent.currentUserDoc);
+        console.log(this.props.teacherStudentComponent.teacherStudentRef.data);
         // check if the individualStudentEditClicked is clicked 
-        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentComponent.currentUserDoc.teacherStudents && !this.props.teacherStudentComponent.individualStudentEditClicked){
+        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentComponent.teacherStudentRef.data && !this.props.teacherStudentComponent.individualStudentEditClicked){
             const antIcon = <LoadingOutlined style={{ fontSize: 20 }} spin />;
             return(
                 <List style={{position: "absolute"}}>
                 {
-                    this.props.teacherStudentComponent.currentUserDoc.teacherStudents.map(function(d, idx){
+                    this.props.teacherStudentComponent.teacherStudentRef.data.map(function(d, idx){
                         return(
                             <List.Item key={d.uid} style={{float: "left", position: "absolute"}}
                             actions={[
@@ -68,7 +69,7 @@ export default class TeacherStudentComponent extends React.Component {
                             ]}
                             >
                                 <List.Item.Meta
-                                    avatar={d.photoUrl ? <Avatar src={d.photoUrl} /> : <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                                    avatar={d.photoURL ? <Avatar src={d.photoURL} /> : <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
                                     title={d.displayName ? d.displayName : "No name for student"}
                                     description={d.email ? d.email : "No email set for student"}
                                 />

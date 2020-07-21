@@ -1,9 +1,10 @@
 // pages/dashboard.js
 import React from 'react';
 import withAuth from '../src/helpers/withAuth';
-import { db } from '../src/firebase';
+import { db, functions } from '../src/firebase';
 import Router from 'next/router';
 import { TeacherDashboard } from '../components/teacherDashboard';
+import { auth } from 'firebase';
 
 
 class Dashboard extends React.Component {
@@ -12,6 +13,7 @@ class Dashboard extends React.Component {
     this.state = {
       authUser: this.props.authUser,
       currentUserDoc: null,
+      teacherStudentRef: null,
       newTeacherUserFlow: false,
       loading: true,
       studentDashboard: false,
@@ -39,7 +41,22 @@ class Dashboard extends React.Component {
             });
           } else if(doc.data().userType == "teacher"){
             // TODO: get the teacher doc here instad of the users doc
-            currentComponent.setState({teacherDashboard: true, currentUserDoc: doc.data()})
+            let teacherRef = db.collection("teachers").doc(this.state.authUser.uid);
+            teacherRef.get().then((teacherDoc) => {
+              const getStudentCollectionDocumentsAsTeacher = functions.httpsCallable('getStudentCollectionDocumentsAsTeacher');
+              getStudentCollectionDocumentsAsTeacher({
+                    uid: this.state.authUser.uid,
+                }).then(result => {
+                    console.log('update sucessful for email and password as teacher' + JSON.stringify(result));
+                    currentComponent.setState({teacherDashboard: true, currentUserDoc: teacherDoc.data(), teacherStudentRef: result});
+                }).catch(err => {
+                    console.log(err)
+                })
+              // db.collection("teachers").doc(this.state.authUser.uid).collection("teacherStudents").getDocuments().then((studentDocs) => {
+              //   currentComponent.setState({teacherDashboard: true, currentUserDoc: teacherDoc.data(), teacherStudentRef: studentDocs});
+              // });
+            });
+            // currentComponent.setState({teacherDashboard: true, currentUserDoc: doc.data()})
           }
         } else {
           console.log("No such document!");
@@ -58,7 +75,7 @@ class Dashboard extends React.Component {
         Router.push('/teacher_setup');
       } else if(this.state.teacherDashboard == true) {
         console.log("made it to teacher dashboard conditional");
-        return <TeacherDashboard authUser={this.state.authUser} currentUserDoc={this.state.currentUserDoc} />
+        return <TeacherDashboard authUser={this.state.authUser} currentUserDoc={this.state.currentUserDoc} teacherStudentRef={this.state.teacherStudentRef}/>
       } else {
         return <p>Nothing implemented for these conditions yet...</p>
       }
