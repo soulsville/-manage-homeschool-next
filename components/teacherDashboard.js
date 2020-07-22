@@ -14,7 +14,6 @@ export class TeacherDashboard extends React.Component {
             authUser: this.props.authUser,
             currentUserDoc: this.props.currentUserDoc,
             currentUserClicked: this.props.currentUserDoc,
-            teacherStudentRef: this.props.teacherStudentRef,
             studentClicked: false,
             attendanceOptionClicked: false,
             studentsOptionClicked: false,
@@ -33,7 +32,6 @@ export class TeacherDashboard extends React.Component {
             },
             teacherStudentComponent: {
                 currentUserDoc: this.props.currentUserDoc,
-                teacherStudentRef: this.props.teacherStudentRef,
                 // TODO: change this back to false testing really fast
                 // thnk about changing the email and password if they don't match
                 // the currently using one when editing student profiles
@@ -80,7 +78,7 @@ export class TeacherDashboard extends React.Component {
         console.log(this.state.currentUserDoc);
         console.log(this.state.teacherStudentComponent.currentUserDoc);
         console.log("in teacher dashboard class teacherStudentRef....");
-        console.log(this.state.teacherStudentRef.data);
+        console.log(this.props.teacherStudentRef.data);
 
     }
 
@@ -396,6 +394,17 @@ export class TeacherDashboard extends React.Component {
                     email: email,
                     password: this.state.teacherStudentComponent.individualStudentTeacherEditPassword,
                 }).then(result => {
+                    updateCalls -= 1;
+                    if(updateCalls === 0){
+                        this.handleUpdateOnStudent();
+                        this.setState(prevState => ({
+                            teacherStudentComponent: {
+                                ...prevState.teacherStudentComponent,
+                                individualStudentTeacherEditUpdateButtonLoading: false,
+                                individualStudentEditClicked: false,
+                            }
+                        }));
+                    }
                     console.log('update sucessful for email and password as teacher' + result);
                 }).catch(err => {
                     console.log(err)
@@ -408,7 +417,18 @@ export class TeacherDashboard extends React.Component {
                     studentUid: this.state.teacherStudentComponent.individualEditStudentInformation.uid,
                     photoURL: studentProfilePicFile,
                 }).then(result => {
-                    console.log('update sucessfully updateStudentProfilePicAsTeacher: ' + result);
+                    console.log('update sucessfully updateStudentProfilePicAsTeacher: ' + JSON.stringify(result));
+                    updateCalls -= 1;
+                    if(updateCalls === 0){
+                        this.props.handleUpdateOnStudent();
+                        this.setState(prevState => ({
+                            teacherStudentComponent: {
+                                ...prevState.teacherStudentComponent,
+                                individualStudentTeacherEditUpdateButtonLoading: false,
+                                individualStudentEditClicked: false,
+                            }
+                        }));
+                    }
                 }).catch(err => {
                     console.log(err)
                 }); 
@@ -451,7 +471,7 @@ export class TeacherDashboard extends React.Component {
                 individualStudentEditLoading: true
             }
         }));
-        this.state.teacherStudentComponent.teacherStudentRef.data.forEach((student) => {
+        this.props.teacherStudentRef.data.forEach((student) => {
             if(student.uid === e.uid) {
                 this.setState(prevState => ({
                     teacherStudentComponent: {
@@ -712,7 +732,7 @@ export class TeacherDashboard extends React.Component {
                         attendanceComponent={this.state.attendanceComponent}
                         studentsOptionClicked={this.state.studentsOptionClicked}
                         teacherStudentComponent={this.state.teacherStudentComponent}
-                        teacherStudentRef={this.state.teacherStudentRef}
+                        teacherStudentRef={this.props.teacherStudentRef}
                         teacherStudentComponentHandleTeacherStudentClick={this.teacherStudentComponentHandleTeacherStudentClick}
                         handleMenuClick={this.handleMenuClick}
                         studentAttendanceSubmitClicked={this.studentAttendanceSubmitClicked}

@@ -19,6 +19,7 @@ class Dashboard extends React.Component {
       studentDashboard: false,
       teacherDashboard: false,
     };
+    this.handleUpdateOnStudent = this.handleUpdateOnStudent.bind(this);
   }
 
   componentDidMount() {
@@ -67,6 +68,21 @@ class Dashboard extends React.Component {
     }
   }
 
+  handleUpdateOnStudent = () => {
+    // get the latest update on the students
+    const getStudentCollectionDocumentsAsTeacher = functions.httpsCallable('getStudentCollectionDocumentsAsTeacher');
+    getStudentCollectionDocumentsAsTeacher({
+          uid: this.state.authUser.uid,
+      }).then(result => {
+          console.log('update sucessful for email and password as teacher' + JSON.stringify(result));
+          this.setState({
+            teacherStudentRef: result
+          });
+      }).catch(err => {
+          console.log(err)
+      });
+  }
+
   render() {
     const renderConditionalDashboard = () => {
       console.log("be here now")
@@ -75,7 +91,11 @@ class Dashboard extends React.Component {
         Router.push('/teacher_setup');
       } else if(this.state.teacherDashboard == true) {
         console.log("made it to teacher dashboard conditional");
-        return <TeacherDashboard authUser={this.state.authUser} currentUserDoc={this.state.currentUserDoc} teacherStudentRef={this.state.teacherStudentRef}/>
+        return <TeacherDashboard 
+                authUser={this.state.authUser} currentUserDoc={this.state.currentUserDoc} 
+                teacherStudentRef={this.state.teacherStudentRef}
+                handleUpdateOnStudent={this.handleUpdateOnStudent}
+                />
       } else {
         return <p>Nothing implemented for these conditions yet...</p>
       }
