@@ -156,6 +156,7 @@ export default class Nav extends React.Component {
             console.log(this.props.teacherStudentComponent);
             console.log(this.props.teacherStudentComponent.currentUserDoc);
             return <TeacherStudentComponent
+                    teacherStudentRef={this.props.teacherStudentRef}
                     teacherStudentComponent={this.props.teacherStudentComponent}
                     teacherStudentComponentHandleTeacherStudentClick={this.props.teacherStudentComponentHandleTeacherStudentClick}
                     handleIndividualStudentTeacherEditNameChange={this.props.handleIndividualStudentTeacherEditNameChange}
