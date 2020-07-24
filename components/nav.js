@@ -169,6 +169,7 @@ export default class Nav extends React.Component {
                     onBlurhandleIndividualStudentTeacherEditPasswordChange={this.props.onBlurhandleIndividualStudentTeacherEditPasswordChange}
                     handleIndividualStudentTeacherEditImageChange={this.props.handleIndividualStudentTeacherEditImageChange}
                     handleIndividualStudentTeacherUpload={this.props.handleIndividualStudentTeacherUpload}
+                    handleIndividualStudentTeacherBackClicked={this.props.handleIndividualStudentTeacherBackClicked}
                    />
         }
     }

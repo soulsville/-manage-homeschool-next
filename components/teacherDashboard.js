@@ -71,6 +71,7 @@ export class TeacherDashboard extends React.Component {
         this.onBlurhandleIndividualStudentTeacherEditPasswordChange = this.onBlurhandleIndividualStudentTeacherEditPasswordChange.bind(this);
         this.handleIndividualStudentTeacherEditImageChange = this.handleIndividualStudentTeacherEditImageChange.bind(this);
         this.handleIndividualStudentTeacherUpload = this.handleIndividualStudentTeacherUpload.bind(this);
+        this.handleIndividualStudentTeacherBackClicked = this.handleIndividualStudentTeacherBackClicked.bind(this);
     }
 
     componentDidMount() {
@@ -394,9 +395,9 @@ export class TeacherDashboard extends React.Component {
                     email: email,
                     password: this.state.teacherStudentComponent.individualStudentTeacherEditPassword,
                 }).then(result => {
-                    updateCalls -= 1;
-                    if(updateCalls === 0){
-                        this.handleUpdateOnStudent();
+                    updateCalls -= 2;
+                    if(updateCalls <= 0){
+                        this.props.handleUpdateOnStudent();
                         this.setState(prevState => ({
                             teacherStudentComponent: {
                                 ...prevState.teacherStudentComponent,
@@ -405,7 +406,7 @@ export class TeacherDashboard extends React.Component {
                             }
                         }));
                     }
-                    console.log('update sucessful for email and password as teacher' + result);
+                    console.log('update sucessful for email or password as teacher' + result);
                 }).catch(err => {
                     console.log(err)
                 })
@@ -419,7 +420,7 @@ export class TeacherDashboard extends React.Component {
                 }).then(result => {
                     console.log('update sucessfully updateStudentProfilePicAsTeacher: ' + JSON.stringify(result));
                     updateCalls -= 1;
-                    if(updateCalls === 0){
+                    if(updateCalls <= 0){
                         this.props.handleUpdateOnStudent();
                         this.setState(prevState => ({
                             teacherStudentComponent: {
@@ -444,6 +445,17 @@ export class TeacherDashboard extends React.Component {
                     requireStudentGradeUpdate: requireStudentGradeUpdate,
                 }).then(result => {
                     console.log('update sucessfully updateStudentNameGradeAsTeacher: ' + JSON.stringify(result));
+                    updateCalls -= 2;
+                    if(updateCalls === 0){
+                        this.props.handleUpdateOnStudent();
+                        this.setState(prevState => ({
+                            teacherStudentComponent: {
+                                ...prevState.teacherStudentComponent,
+                                individualStudentTeacherEditUpdateButtonLoading: false,
+                                individualStudentEditClicked: false,
+                            }
+                        }));
+                    }
                 }).catch(err => {
                     console.log(err)
                 });
@@ -458,6 +470,19 @@ export class TeacherDashboard extends React.Component {
         }
     }
     /* Update Button End */ 
+
+    /* Back Button */
+    handleIndividualStudentTeacherBackClicked = (e) => {
+        e.preventDefault();
+        this.setState(prevState => ({
+            teacherStudentComponent: {
+                ...prevState.teacherStudentComponent,
+                individualStudentEditClicked: false,
+            }
+        }));
+    }
+    
+    /* Back Button End */
     /* individualStudentTeacherEdit component functions  end */
 
     /* teacherStudentComponent functions */
@@ -483,22 +508,6 @@ export class TeacherDashboard extends React.Component {
                 }));
             }
         });
-        // const getStudentDocumentAsTeacher = functions.httpsCallable('getStudentDocumentAsTeacher');
-        // getStudentDocumentAsTeacher({
-        //     uid: this.state.currentUserDoc.uid,
-        //     studentUid: e.uid,
-        // }).then(result => {
-        //     this.setState(prevState => ({
-        //         teacherStudentComponent: {
-        //             ...prevState.teacherStudentComponent,
-        //             individualStudentEditClicked: true,
-        //             individualEditStudentInformation: result,
-        //             individualStudentEditLoading: false,
-        //         }
-        //     }));
-        // }).catch(err => {
-        //     console.log(err)
-        // });
     }
 
     /* teacherStudentComponent functions end */
@@ -751,6 +760,7 @@ export class TeacherDashboard extends React.Component {
                         onBlurhandleIndividualStudentTeacherEditPasswordChange={this.onBlurhandleIndividualStudentTeacherEditPasswordChange}
                         handleIndividualStudentTeacherEditImageChange={this.handleIndividualStudentTeacherEditImageChange}
                         handleIndividualStudentTeacherUpload={this.handleIndividualStudentTeacherUpload}
+                        handleIndividualStudentTeacherBackClicked={this.handleIndividualStudentTeacherBackClicked}
                     />
                 </div>
             </React.Fragment>

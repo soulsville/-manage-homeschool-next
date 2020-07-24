@@ -148,7 +148,7 @@ export default class TeacherEditStudentComponent extends React.Component {
 
     backButtonComponent = () => {
         return(
-            <Button style={{ float: 'left' }}>
+            <Button style={{ float: 'left' }} onClick={(e) => this.props.handleIndividualStudentTeacherBackClicked(e)}>
                 Back
             </Button>
         )
