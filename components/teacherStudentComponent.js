@@ -14,6 +14,8 @@ import { LoadingOutlined } from '@ant-design/icons';
 import stylesheet from 'antd/dist/antd.min.css';
 
 import TeacherEditStudentComponent from '../components/individualStudentTeacherEdit';
+import TeacherStudentAdd from '../components/teacherStudentAdd';
+
 
 
 export default class TeacherStudentComponent extends React.Component {
@@ -37,9 +39,9 @@ export default class TeacherStudentComponent extends React.Component {
     }
 
     addStudentsButtonComponent = () => {
-        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentRef.data && !this.props.teacherStudentComponent.individualStudentEditClicked){
+        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentRef.data && !this.props.teacherStudentComponent.individualStudentEditClicked && !this.props.teacherStudentComponent.teacherStudentComponentAddStudentsClicked){
             return(
-                <Button type="primary" icon={<FolderAddTwoTone />} size="default" style={{marginLeft: 40}}>
+                <Button type="primary" icon={<FolderAddTwoTone />} size="default" style={{marginLeft: 40}} onClick={(e) => this.props.handleTeacherStudentComponentAddStudents(e)}>
                     Add Students
                 </Button>
             )
@@ -50,7 +52,7 @@ export default class TeacherStudentComponent extends React.Component {
         console.log("in teacherStudentComponent");
         console.log(this.props.teacherStudentRef.data);
         // check if the individualStudentEditClicked is clicked 
-        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentRef.data && !this.props.teacherStudentComponent.individualStudentEditClicked){
+        if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentRef.data && !this.props.teacherStudentComponent.individualStudentEditClicked && !this.props.teacherStudentComponent.teacherStudentComponentAddStudentsClicked){
             const antIcon = <LoadingOutlined style={{ fontSize: 20 }} spin />;
             return(
                 <List style={{position: "absolute"}}>
@@ -79,7 +81,7 @@ export default class TeacherStudentComponent extends React.Component {
                 }
                 </List>
             )
-        } else if (this.props.teacherStudentComponent.individualStudentEditClicked == true) {
+        } else if (this.props.teacherStudentComponent.individualStudentEditClicked == true && !this.props.teacherStudentComponent.teacherStudentComponentAddStudentsClicked) {
             return <TeacherEditStudentComponent
                     teacherStudentRef={this.props.teacherStudentRef}
                     individualEditStudentInformation={this.props.teacherStudentComponent.individualEditStudentInformation}
@@ -96,15 +98,8 @@ export default class TeacherStudentComponent extends React.Component {
                     handleIndividualStudentTeacherUpload={this.props.handleIndividualStudentTeacherUpload}
                     handleIndividualStudentTeacherBackClicked={this.props.handleIndividualStudentTeacherBackClicked}
                    />
-            // displayName: "asdlkfj 89234"
-            // email: "alskdjf@gmail.com"
-            // emailVerified: false
-            // isNewUser: true
-            // photoURL: null
-            // teacherUid: "19IhT36iYrc8ttuKtLXgyx4yNGE2"
-            // uid: "CaAUbJk1CVeimMJRPJyJbmTHhmP2"
-            // userType: "student"
-            // TODO: add edit information with the stuff above add a save button and also a back button
+        } else if(this.props.teacherStudentComponent.teacherStudentComponentAddStudentsClicked === true && !this.props.teacherStudentComponent.individualStudentEditClicked) {
+            return <TeacherStudentAdd />
         } else {
             return(
                 null

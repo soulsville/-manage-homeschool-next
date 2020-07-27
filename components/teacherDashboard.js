@@ -35,6 +35,7 @@ export class TeacherDashboard extends React.Component {
                 // TODO: change this back to false testing really fast
                 // thnk about changing the email and password if they don't match
                 // the currently using one when editing student profiles
+                teacherStudentComponentAddStudentsClicked: false,
                 individualStudentEditClicked: false,
                 individualEditStudentInformation: null,
                 individualStudentEditLoading: false,
@@ -72,6 +73,7 @@ export class TeacherDashboard extends React.Component {
         this.handleIndividualStudentTeacherEditImageChange = this.handleIndividualStudentTeacherEditImageChange.bind(this);
         this.handleIndividualStudentTeacherUpload = this.handleIndividualStudentTeacherUpload.bind(this);
         this.handleIndividualStudentTeacherBackClicked = this.handleIndividualStudentTeacherBackClicked.bind(this);
+        this.handleTeacherStudentComponentAddStudents = this.handleTeacherStudentComponentAddStudents.bind(this);
     }
 
     componentDidMount() {
@@ -510,6 +512,16 @@ export class TeacherDashboard extends React.Component {
         });
     }
 
+    handleTeacherStudentComponentAddStudents = (e) => {
+        e.preventDefault();
+        this.setState(prevState => ({
+            teacherStudentComponent: {
+                ...prevState.teacherStudentComponent,
+                teacherStudentComponentAddStudentsClicked: true
+            }
+        }));
+    }
+
     /* teacherStudentComponent functions end */
 
     /* Student attendance functions */
@@ -761,6 +773,7 @@ export class TeacherDashboard extends React.Component {
                         handleIndividualStudentTeacherEditImageChange={this.handleIndividualStudentTeacherEditImageChange}
                         handleIndividualStudentTeacherUpload={this.handleIndividualStudentTeacherUpload}
                         handleIndividualStudentTeacherBackClicked={this.handleIndividualStudentTeacherBackClicked}
+                        handleTeacherStudentComponentAddStudents={this.handleTeacherStudentComponentAddStudents}
                     />
                 </div>
             </React.Fragment>
