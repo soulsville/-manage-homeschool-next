@@ -170,6 +170,7 @@ export default class Nav extends React.Component {
                     handleIndividualStudentTeacherEditImageChange={this.props.handleIndividualStudentTeacherEditImageChange}
                     handleIndividualStudentTeacherUpload={this.props.handleIndividualStudentTeacherUpload}
                     handleIndividualStudentTeacherBackClicked={this.props.handleIndividualStudentTeacherBackClicked}
+                    handleTeacherStudentComponentAddStudents={this.props.handleTeacherStudentComponentAddStudents}
                    />
         }
     }

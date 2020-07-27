@@ -184,7 +184,6 @@ export default class TeacherEditStudentComponent extends React.Component {
     }
 
     render() {
-        // TODO: finish up the avatar, wire up the update and back button, create the cloudfunction for updating students profile
         return (
             <React.Fragment>
                 <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
