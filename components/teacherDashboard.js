@@ -52,6 +52,13 @@ export class TeacherDashboard extends React.Component {
                 individualStudentTeacherProfilePicFile: null,
                 individualStudentTeacherEditUpdateButtonError: null,
                 individualStudentTeacherEditUpdateButtonLoading: false,
+                teacherStudentAddModalVisible: true,
+                teacherStudentAddName: "",
+                teacherStudentAddNameError: false,
+                teacherStudentAddEmail: "",
+                teacherStudentAddPhotoURL: "",
+                teacherStudentAddCurrentGrade: "",
+                teacherStudentAddCurrentGradeError: false,
             },
         }
         this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -74,6 +81,12 @@ export class TeacherDashboard extends React.Component {
         this.handleIndividualStudentTeacherUpload = this.handleIndividualStudentTeacherUpload.bind(this);
         this.handleIndividualStudentTeacherBackClicked = this.handleIndividualStudentTeacherBackClicked.bind(this);
         this.handleTeacherStudentComponentAddStudents = this.handleTeacherStudentComponentAddStudents.bind(this);
+        this.handleCancelTeacherStudentAdd = this.handleCancelTeacherStudentAdd.bind(this);
+        this.handleSubmitTeacherStudentAdd = this.handleSubmitTeacherStudentAdd.bind(this);
+        this.handleTeacherStudentAddName = this.handleTeacherStudentAddName.bind(this);
+        this.onBlurhandleTeacherStudentAddName = this.onBlurhandleTeacherStudentAddName.bind(this);
+        this.handleTeacherStudentAddCurrentGrade = this.handleTeacherStudentAddCurrentGrade.bind(this);
+        this.onBlurhandleTeacherStudentAddCurrentGrade = this.onBlurhandleTeacherStudentAddCurrentGrade.bind(this);
     }
 
     componentDidMount() {
@@ -485,6 +498,103 @@ export class TeacherDashboard extends React.Component {
     }
     
     /* Back Button End */
+
+    /* teacherStudentAdd */
+    handleSubmitTeacherStudentAdd = (e) => {
+
+    }
+
+    handleCancelTeacherStudentAdd = (e) => {
+        this.setState(prevState => ({
+            teacherStudentComponent: {
+                ...prevState.teacherStudentComponent,
+                teacherStudentAddModalVisible: false,
+                teacherStudentComponentAddStudentsClicked: false,
+                teacherStudentAddModalVisible: true,
+                teacherStudentAddName: "",
+                teacherStudentAddEmail: "",
+                teacherStudentAddPhotoURL: "",
+                teacherStudentAddCurrentGrade: "",
+                teacherStudentAddNameError: false,
+
+            }
+        }));
+    }
+
+    handleTeacherStudentAddName = (e) => {
+        console.log("in handleTeacherStudentAddName");
+        e.preventDefault();
+        const target = e.target;
+        const value = target.value;
+        console.log("value: " + value);
+        if(value){
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    teacherStudentAddName: value,
+                    teacherStudentAddNameError: false,
+                }
+            }));
+        } else {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    teacherStudentAddName: value,
+                }
+            }));
+        }
+    }
+
+    onBlurhandleTeacherStudentAddName = (e) => {
+        e.preventDefault();
+        if (!this.state.teacherStudentComponent.teacherStudentAddName) {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    teacherStudentAddNameError: true,
+                }
+            }));
+        }
+    }
+
+    handleTeacherStudentAddCurrentGrade = (e) => {
+        console.log("in handleTeacherStudentAddCurrentGrade");
+        e.preventDefault();
+        const target = e.target;
+        const value = target.value;
+        console.log("value: " + value);
+        if(value){
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    teacherStudentAddCurrentGrade: value,
+                    teacherStudentAddCurrentGradeError: false,
+                }
+            }));
+        } else {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    teacherStudentAddCurrentGrade: value,
+                }
+            }));
+        }
+    }
+
+    onBlurhandleTeacherStudentAddCurrentGrade = (e) => {
+        e.preventDefault();
+        if (!this.state.teacherStudentComponent.teacherStudentAddCurrentGrade) {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    teacherStudentAddCurrentGradeError: true,
+                }
+            }));
+        }
+    }
+
+    /* teacherStudentAdd End */
+
     /* individualStudentTeacherEdit component functions  end */
 
     /* teacherStudentComponent functions */
@@ -518,6 +628,7 @@ export class TeacherDashboard extends React.Component {
             teacherStudentComponent: {
                 ...prevState.teacherStudentComponent,
                 teacherStudentComponentAddStudentsClicked: true
+
             }
         }));
     }
@@ -774,6 +885,14 @@ export class TeacherDashboard extends React.Component {
                         handleIndividualStudentTeacherUpload={this.handleIndividualStudentTeacherUpload}
                         handleIndividualStudentTeacherBackClicked={this.handleIndividualStudentTeacherBackClicked}
                         handleTeacherStudentComponentAddStudents={this.handleTeacherStudentComponentAddStudents}
+                        handleCancelTeacherStudentAdd={this.handleCancelTeacherStudentAdd}
+                        handleSubmitTeacherStudentAdd={this.handleSubmitTeacherStudentAdd}
+                        handleTeacherStudentAddName={this.handleTeacherStudentAddName}
+                        onBlurhandleTeacherStudentAddName={this.onBlurhandleTeacherStudentAddName}
+                        handleTeacherStudentAddName={this.handleTeacherStudentAddName}
+                        onBlurhandleTeacherStudentAddName={this.onBlurhandleTeacherStudentAddName}
+                        handleTeacherStudentAddCurrentGrade={this.handleTeacherStudentAddCurrentGrade}
+                        onBlurhandleTeacherStudentAddCurrentGrade={this.onBlurhandleTeacherStudentAddCurrentGrade}
                     />
                 </div>
             </React.Fragment>

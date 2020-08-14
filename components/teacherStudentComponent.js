@@ -99,8 +99,17 @@ export default class TeacherStudentComponent extends React.Component {
                     handleIndividualStudentTeacherBackClicked={this.props.handleIndividualStudentTeacherBackClicked}
                    />
         } else if(this.props.teacherStudentComponent.teacherStudentComponentAddStudentsClicked === true && !this.props.teacherStudentComponent.individualStudentEditClicked) {
-            return <TeacherStudentAdd />
+            return <TeacherStudentAdd 
+                    handleCancelTeacherStudentAdd = {this.props.handleCancelTeacherStudentAdd}
+                    handleSubmitTeacherStudentAdd = {this.props.handleSubmitTeacherStudentAdd}
+                    handleTeacherStudentAddName={this.props.handleTeacherStudentAddName}
+                    onBlurhandleTeacherStudentAddName={this.props.onBlurhandleTeacherStudentAddName}
+                    handleTeacherStudentAddCurrentGrade={this.props.handleTeacherStudentAddCurrentGrade}
+                    onBlurhandleTeacherStudentAddCurrentGrade={this.props.onBlurhandleTeacherStudentAddCurrentGrade}
+                    teacherStudentComponent={this.props.teacherStudentComponent}
+                   />
         } else {
+            console.log("I'm in the null...");
             return(
                 null
             )

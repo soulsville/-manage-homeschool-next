@@ -171,6 +171,12 @@ export default class Nav extends React.Component {
                     handleIndividualStudentTeacherUpload={this.props.handleIndividualStudentTeacherUpload}
                     handleIndividualStudentTeacherBackClicked={this.props.handleIndividualStudentTeacherBackClicked}
                     handleTeacherStudentComponentAddStudents={this.props.handleTeacherStudentComponentAddStudents}
+                    handleCancelTeacherStudentAdd = {this.props.handleCancelTeacherStudentAdd}
+                    handleSubmitTeacherStudentAdd = {this.props.handleSubmitTeacherStudentAdd}
+                    handleTeacherStudentAddName={this.props.handleTeacherStudentAddName}
+                    onBlurhandleTeacherStudentAddName={this.props.onBlurhandleTeacherStudentAddName}
+                    handleTeacherStudentAddCurrentGrade={this.props.handleTeacherStudentAddCurrentGrade}
+                    onBlurhandleTeacherStudentAddCurrentGrade={this.props.onBlurhandleTeacherStudentAddCurrentGrade}
                    />
         }
     }
