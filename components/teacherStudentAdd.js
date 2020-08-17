@@ -50,50 +50,41 @@ export default class TeacherStudentAdd extends React.Component {
     emailComponent = () => {
         console.log("this.props.teacherStudentComponent.teacherStudentAddStudentLoginRequired");
         console.log(this.props.teacherStudentComponent.teacherStudentAddStudentLoginRequired);
-        if(this.props.teacherStudentComponent.teacherStudentAddStudentLoginRequired === true){
-            return(
-                <div>
-                    <p>Email</p>
-                    <Form.Item>
-                        <Input size="medium" style={{ borderWidth: "0 0 2px" }} 
-                        />
-                    </Form.Item>
-                </div>
-            )
+        if(this.props.teacherStudentComponent.teacherStudentAddStudentLoginRequired === true) {
+            if(this.props.teacherStudentComponent.teacherStudentAddEmailError) {
+                return(
+                    <div>
+                        <p>Email</p>
+                        <Form.Item
+                        validateStatus="error"
+                        help="Email is invalid">
+                            <Input size="medium" style={{ borderWidth: "0 0 2px" }} 
+                             onChange={(e) => this.props.handleTeacherStudentAddEmail(e)}
+                             value={this.props.teacherStudentComponent.teacherStudentAddEmail}
+                             onBlur={(e) => this.props.onBlurhandleTeacherStudentAddEmail(e)}
+                            />
+                        </Form.Item>
+                    </div>
+                )
+            } else {
+                return(
+                    <div>
+                        <p>Email</p>
+                        <Form.Item>
+                            <Input size="medium" style={{ borderWidth: "0 0 2px" }} 
+                             onChange={(e) => this.props.handleTeacherStudentAddEmail(e)}
+                             value={this.props.teacherStudentComponent.teacherStudentAddEmail}
+                             onBlur={(e) => this.props.onBlurhandleTeacherStudentAddEmail(e)}
+                            />
+                        </Form.Item>
+                    </div>
+                )
+            }
         } else {
             return(
                 null
             )
         }
-        // if(this.props.teacherStudentComponent.teacherStudentAddEmailError) {
-        //     return(
-        //         <div>
-        //             <p>Email</p>
-        //             <Form.Item
-        //             validateStatus="error"
-        //             help="Student Email not valid">
-        //                 <Input size="medium" style={{ borderWidth: "0 0 2px" }} 
-        //                  onChange={(e) => this.props.handleTeacherStudentAddEmail(e)}
-        //                  value={this.props.teacherStudentComponent.teacherStudentAddEmail}
-        //                  onBlur={(e) => this.props.onBlurhandleTeacherStudentAddEmail(e)}
-        //                 />
-        //             </Form.Item>
-        //         </div>
-        //     )
-        // } else {
-        //     return(
-        //         <div>
-        //             <p>Name</p>
-        //             <Form.Item>
-        //                 <Input size="medium" style={{ borderWidth: "0 0 2px" }} 
-        //                  onChange={(e) => this.props.handleTeacherStudentAddName(e)}
-        //                  value={this.props.teacherStudentComponent.teacherStudentAddName}
-        //                  onBlur={(e) => this.props.onBlurhandleTeacherStudentAddName(e)}
-        //                 />
-        //             </Form.Item>
-        //         </div>
-        //     )
-        // }
     }
 
     currentGradeComponent = () => {
