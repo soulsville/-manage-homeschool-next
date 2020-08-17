@@ -59,6 +59,7 @@ export class TeacherDashboard extends React.Component {
                 teacherStudentAddPhotoURL: "",
                 teacherStudentAddCurrentGrade: "",
                 teacherStudentAddCurrentGradeError: false,
+                teacherStudentAddStudentLoginRequired: false,
             },
         }
         this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -87,6 +88,7 @@ export class TeacherDashboard extends React.Component {
         this.onBlurhandleTeacherStudentAddName = this.onBlurhandleTeacherStudentAddName.bind(this);
         this.handleTeacherStudentAddCurrentGrade = this.handleTeacherStudentAddCurrentGrade.bind(this);
         this.onBlurhandleTeacherStudentAddCurrentGrade = this.onBlurhandleTeacherStudentAddCurrentGrade.bind(this);
+        this.requireLoginPortalForStudent = this.requireLoginPortalForStudent.bind(this);
     }
 
     componentDidMount() {
@@ -516,7 +518,8 @@ export class TeacherDashboard extends React.Component {
                 teacherStudentAddPhotoURL: "",
                 teacherStudentAddCurrentGrade: "",
                 teacherStudentAddNameError: false,
-
+                teacherStudentAddCurrentGradeError: false,
+                teacherStudentAddStudentLoginRequired: false,
             }
         }));
     }
@@ -588,6 +591,26 @@ export class TeacherDashboard extends React.Component {
                 teacherStudentComponent: {
                     ...prevState.teacherStudentComponent,
                     teacherStudentAddCurrentGradeError: true,
+                }
+            }));
+        }
+    }
+
+    requireLoginPortalForStudent = (e) => {
+        console.log("in requireLoginPortalForStudent");
+        if(this.state.teacherStudentComponent.teacherStudentAddStudentLoginRequired) {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    teacherStudentAddStudentLoginRequired: false,
+                    teacherStudentAddEmail: "",
+                }
+            }));
+        } else {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    teacherStudentAddStudentLoginRequired: true,
                 }
             }));
         }
@@ -893,6 +916,7 @@ export class TeacherDashboard extends React.Component {
                         onBlurhandleTeacherStudentAddName={this.onBlurhandleTeacherStudentAddName}
                         handleTeacherStudentAddCurrentGrade={this.handleTeacherStudentAddCurrentGrade}
                         onBlurhandleTeacherStudentAddCurrentGrade={this.onBlurhandleTeacherStudentAddCurrentGrade}
+                        requireLoginPortalForStudent={this.requireLoginPortalForStudent}
                     />
                 </div>
             </React.Fragment>
