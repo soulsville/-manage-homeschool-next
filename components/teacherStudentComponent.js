@@ -107,6 +107,7 @@ export default class TeacherStudentComponent extends React.Component {
                     handleTeacherStudentAddCurrentGrade={this.props.handleTeacherStudentAddCurrentGrade}
                     onBlurhandleTeacherStudentAddCurrentGrade={this.props.onBlurhandleTeacherStudentAddCurrentGrade}
                     teacherStudentComponent={this.props.teacherStudentComponent}
+                    requireLoginPortalForStudent={this.props.requireLoginPortalForStudent}
                    />
         } else {
             console.log("I'm in the null...");
