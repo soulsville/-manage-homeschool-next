@@ -178,6 +178,8 @@ export default class Nav extends React.Component {
                     handleTeacherStudentAddCurrentGrade={this.props.handleTeacherStudentAddCurrentGrade}
                     onBlurhandleTeacherStudentAddCurrentGrade={this.props.onBlurhandleTeacherStudentAddCurrentGrade}
                     requireLoginPortalForStudent={this.props.requireLoginPortalForStudent}
+                    handleTeacherStudentAddEmail={this.props.handleTeacherStudentAddEmail}
+                    onBlurhandleTeacherStudentAddEmail={this.props.onBlurhandleTeacherStudentAddEmail}
                    />
         }
     }

@@ -56,6 +56,8 @@ export class TeacherDashboard extends React.Component {
                 teacherStudentAddName: "",
                 teacherStudentAddNameError: false,
                 teacherStudentAddEmail: "",
+                teacherStudentAddEmailError: null,
+                handleTeacherStudentAddEmailIsPristine: true,
                 teacherStudentAddPhotoURL: "",
                 teacherStudentAddCurrentGrade: "",
                 teacherStudentAddCurrentGradeError: false,
@@ -89,6 +91,8 @@ export class TeacherDashboard extends React.Component {
         this.handleTeacherStudentAddCurrentGrade = this.handleTeacherStudentAddCurrentGrade.bind(this);
         this.onBlurhandleTeacherStudentAddCurrentGrade = this.onBlurhandleTeacherStudentAddCurrentGrade.bind(this);
         this.requireLoginPortalForStudent = this.requireLoginPortalForStudent.bind(this);
+        this.handleTeacherStudentAddEmail = this.handleTeacherStudentAddEmail.bind(this);
+        this.onBlurhandleTeacherStudentAddEmail = this.onBlurhandleTeacherStudentAddEmail.bind(this);
     }
 
     componentDidMount() {
@@ -502,8 +506,126 @@ export class TeacherDashboard extends React.Component {
     /* Back Button End */
 
     /* teacherStudentAdd */
-    handleSubmitTeacherStudentAdd = (e) => {
+    // TODO: caution: function has side effects to state
+    handleSubmitTeacherStudentAddClientSideSubmitErrorsExist = () => {
+        // check if all the state values required actually exist if not set the appropropriate errors
+        if(this.state.teacherStudentComponent.teacherStudentAddStudentLoginRequired) {
+            if(!this.state.teacherStudentComponent.teacherStudentAddEmail &&
+               !this.state.teacherStudentComponent.teacherStudentAddName &&
+               !this.state.teacherStudentComponent.teacherStudentAddCurrentGrade) {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        teacherStudentAddEmailError: true,
+                        handleTeacherStudentAddEmailIsPristine: false,
+                        teacherStudentAddNameError: true,
+                        teacherStudentAddCurrentGradeError: true,
+                    }
+                }));
+                return true;
+            } else if(!this.state.teacherStudentComponent.teacherStudentAddEmail &&
+                      !this.state.teacherStudentComponent.teacherStudentAddName) {
+                       this.setState(prevState => ({
+                            teacherStudentComponent: {
+                                ...prevState.teacherStudentComponent,
+                                teacherStudentAddEmailError: true,
+                                handleTeacherStudentAddEmailIsPristine: false,
+                                teacherStudentAddNameError: true,
+                            }
+                        }));
+                        return true;
+            } else if(!this.state.teacherStudentComponent.teacherStudentAddEmail &&
+                      !this.state.teacherStudentComponent.teacherStudentAddCurrentGrade) {
+                      this.setState(prevState => ({
+                            teacherStudentComponent: {
+                                ...prevState.teacherStudentComponent,
+                                teacherStudentAddEmailError: true,
+                                handleTeacherStudentAddEmailIsPristine: false,
+                                teacherStudentAddCurrentGradeError: true,
+                            }
+                        }));
+                        return true;
+            } else if(!this.state.teacherStudentComponent.teacherStudentAddName &&
+                      !this.state.teacherStudentComponent.teacherStudentAddCurrentGrade) {
+                        this.setState(prevState => ({
+                            teacherStudentComponent: {
+                                ...prevState.teacherStudentComponent,
+                                teacherStudentAddNameError: true,
+                                teacherStudentAddCurrentGradeError: true,
+                            }
+                        }));
+                        return true;
+            } else if(!this.state.teacherStudentComponent.teacherStudentAddEmail) {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        teacherStudentAddEmailError: true,
+                        handleTeacherStudentAddEmailIsPristine: false,
+                    }
+                }));
+                return true;
+            } else if(!this.state.teacherStudentComponent.teacherStudentAddName) {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        teacherStudentAddNameError: true,
+                    }
+                }));
+                return true;
+            } else if(!this.state.teacherStudentComponent.teacherStudentAddCurrentGrade) {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        teacherStudentAddCurrentGradeError: true,
+                    }
+                }));
+                return true;
+            }
+            return false;
+        } else {
+            if(!this.state.teacherStudentComponent.teacherStudentAddName &&
+               !this.state.teacherStudentComponent.teacherStudentAddCurrentGrade) {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        teacherStudentAddNameError: true,
+                        teacherStudentAddCurrentGradeError: true,
+                    }
+                 }));
+                 return true;
+             } else if(!this.state.teacherStudentComponent.teacherStudentAddName) {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        teacherStudentAddNameError: true,
+                    }
+                 }));
+                 return true;
+             } else if(!this.state.teacherStudentComponent.teacherStudentAddCurrentGrade) {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        teacherStudentAddCurrentGradeError: true,
+                    }
+                 }));
+                 return true;
+             }
+             return false;
+        }
+    }
 
+    handleSubmitTeacherStudentAdd = (e) => {
+        e.preventDefault();
+        // check if all the state values required actually exist if they do set them
+        if(!this.handleSubmitTeacherStudentAddClientSideSubmitErrorsExist()){
+            // no errors on the submit of teacher adding new student
+            // check if student portal is required for this student
+            if(this.state.teacherStudentComponent.teacherStudentAddStudentLoginRequired) {
+                console.log("Call backend API with requiring login portal for student");
+            } else {
+                console.log("Call backend API not requiring login portal for student");
+            }
+        }
     }
 
     handleCancelTeacherStudentAdd = (e) => {
@@ -520,6 +642,8 @@ export class TeacherDashboard extends React.Component {
                 teacherStudentAddNameError: false,
                 teacherStudentAddCurrentGradeError: false,
                 teacherStudentAddStudentLoginRequired: false,
+                handleTeacherStudentAddEmailIsPristine: true,
+                teacherStudentAddEmailError: null,
             }
         }));
     }
@@ -611,6 +735,56 @@ export class TeacherDashboard extends React.Component {
                 teacherStudentComponent: {
                     ...prevState.teacherStudentComponent,
                     teacherStudentAddStudentLoginRequired: true,
+                }
+            }));
+        }
+    }
+
+    handleTeacherStudentAddEmail = (e) => {
+        console.log("in handleTeacherStudentAddEmail");
+        console.log("this.state.handleTeacherStudentAddEmailIsPristine ");
+        console.log(this.state.handleTeacherStudentAddEmailIsPristine);
+        e.preventDefault();
+        const target = e.target;
+        const value = target.value;
+        if(this.state.teacherStudentComponent.handleTeacherStudentAddEmailIsPristine){
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    teacherStudentAddEmail: value,
+                }
+            }));
+        } else {
+            if(this.validateEmail(value)) {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        teacherStudentAddEmail: value,
+                        teacherStudentAddEmailError: null,
+                    }
+                }));
+            } else {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        teacherStudentAddEmail: value,
+                        teacherStudentAddEmailError: true,
+                    }
+                }));
+            }
+        }
+    }
+
+    onBlurhandleTeacherStudentAddEmail = (e) => {
+        console.log("in onBlurhandleTeacherStudentAddEmail ");
+        console.log("this.state.teacherStudentComponent.teacherStudentAddEmail " + this.state.teacherStudentComponent.teacherStudentAddEmail);
+        if(this.state)
+        if(!this.validateEmail(this.state.teacherStudentComponent.teacherStudentAddEmail)) {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    teacherStudentAddEmailError: true,
+                    handleTeacherStudentAddEmailIsPristine: false,
                 }
             }));
         }
@@ -917,6 +1091,8 @@ export class TeacherDashboard extends React.Component {
                         handleTeacherStudentAddCurrentGrade={this.handleTeacherStudentAddCurrentGrade}
                         onBlurhandleTeacherStudentAddCurrentGrade={this.onBlurhandleTeacherStudentAddCurrentGrade}
                         requireLoginPortalForStudent={this.requireLoginPortalForStudent}
+                        handleTeacherStudentAddEmail={this.handleTeacherStudentAddEmail}
+                        onBlurhandleTeacherStudentAddEmail={this.onBlurhandleTeacherStudentAddEmail}
                     />
                 </div>
             </React.Fragment>
