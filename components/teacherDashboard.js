@@ -1119,8 +1119,8 @@ export class TeacherDashboard extends React.Component {
             });
         }
         else {
-            let userClicked = this.state.currentUserDoc.teacherStudents[index];
-            console.log("teacherStudents: " + JSON.stringify(this.state.currentUserDoc.teacherStudents[index]))
+            let userClicked = this.props.teacherStudentRef.data[index];
+            console.log("teacherStudents: " + JSON.stringify(this.props.teacherStudentRef.data[index]));
             this.setState(prevState => ({
                 currentUserClicked: userClicked,
                 studentClicked: true,
