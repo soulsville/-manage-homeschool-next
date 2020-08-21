@@ -1,8 +1,8 @@
 import React from 'react';
-import { Modal, Button, Form, Space, Input, Switch } from 'antd';
+import { Modal, Button, Form, Space, Input, Switch, Avatar, Upload } from 'antd';
 
 import stylesheet from 'antd/dist/antd.min.css';
-import { UploadOutlined, LoadingOutlined } from '@ant-design/icons';
+import { UploadOutlined, UserOutlined } from '@ant-design/icons';
 
 
 
@@ -125,13 +125,19 @@ export default class TeacherStudentAdd extends React.Component {
         )
     }
 
+    uploadAvatarComponent = () => {
+        return(
+            <Upload><Button size="small" style={{border: "none"}}><Avatar icon={<UserOutlined />}/><UploadOutlined /></Button></Upload>
+        )
+    }
+
     render() {
         return (
             <React.Fragment>
                 <style dangerouslySetInnerHTML={{ __html: stylesheet }} />
                 <div>
                     <Modal
-                    title="Add Student"
+                    title={<div style={{display: "inline"}}><Upload customRequest={this.props.handleStudentAddProfilePic}><Button size="small" style={{border: "none"}}><Avatar icon={<UserOutlined />}/><UploadOutlined /></Button><p style={{fontWeight: "bold", whiteSpace: "nowrap", display: "inline"}}>Add Students</p></Upload></div>}
                     visible={this.props.teacherStudentComponent.teacherStudentAddModalVisible}
                     onCancel={this.props.handleCancelTeacherStudentAdd}
                     onOk={this.props.handleSubmitTeacherStudentAdd}
@@ -139,12 +145,13 @@ export default class TeacherStudentAdd extends React.Component {
                         <Button key="back" onClick={(e) => this.props.handleCancelTeacherStudentAdd(e)}>
                           Return
                         </Button>,
-                        <Button key="submit" type="primary" onClick={(e) => this.props.handleSubmitTeacherStudentAdd(e)}>
+                        <Button key="submit" type="primary" loading={this.props.teacherStudentComponent.teacherStudentAddSubmitLoading} onClick={(e) => this.props.handleSubmitTeacherStudentAdd(e)}>
                           Submit
                         </Button>,
                     ]}
                     >
                         <Form name="student_information">
+                            <Space/>
                             <Space/>
                             {this.nameComponent()}
                             {this.currentGradeComponent()}

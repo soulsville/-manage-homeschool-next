@@ -15,6 +15,7 @@ import stylesheet from 'antd/dist/antd.min.css';
 
 import TeacherEditStudentComponent from '../components/individualStudentTeacherEdit';
 import TeacherStudentAdd from '../components/teacherStudentAdd';
+import TeacherStudentShowStudents from './teacherStudentShowStudents';
 
 
 
@@ -51,8 +52,13 @@ export default class TeacherStudentComponent extends React.Component {
     showStudentsComponent = (context) => {
         console.log("in teacherStudentComponent");
         console.log(this.props.teacherStudentRef.data);
-        // check if the individualStudentEditClicked is clicked 
+        // check if the individualStudentEditClicked is clicked
         if(this.props.teacherStudentComponent.currentUserDoc && this.props.teacherStudentRef.data && !this.props.teacherStudentComponent.individualStudentEditClicked && !this.props.teacherStudentComponent.teacherStudentComponentAddStudentsClicked){
+            return <TeacherStudentShowStudents
+                    teacherStudentComponent={this.props.teacherStudentComponent}
+                    teacherStudentComponentHandleTeacherStudentClick={this.props.teacherStudentComponentHandleTeacherStudentClick}
+                    teacherStudentRef={this.props.teacherStudentRef}
+                   />
             const antIcon = <LoadingOutlined style={{ fontSize: 20 }} spin />;
             return(
                 <List style={{position: "absolute"}}>
@@ -110,6 +116,7 @@ export default class TeacherStudentComponent extends React.Component {
                     requireLoginPortalForStudent={this.props.requireLoginPortalForStudent}
                     handleTeacherStudentAddEmail={this.props.handleTeacherStudentAddEmail}
                     onBlurhandleTeacherStudentAddEmail={this.props.onBlurhandleTeacherStudentAddEmail}
+                    handleStudentAddProfilePic={this.props.handleStudentAddProfilePic}
                    />
         } else {
             console.log("I'm in the null...");
