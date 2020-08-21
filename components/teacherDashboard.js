@@ -62,6 +62,8 @@ export class TeacherDashboard extends React.Component {
                 teacherStudentAddCurrentGrade: "",
                 teacherStudentAddCurrentGradeError: false,
                 teacherStudentAddStudentLoginRequired: false,
+                teacherStudentAddSubmitLoading: false,
+                teacherStudentAddSubmitBackendError: false,
             },
         }
         this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -93,6 +95,7 @@ export class TeacherDashboard extends React.Component {
         this.requireLoginPortalForStudent = this.requireLoginPortalForStudent.bind(this);
         this.handleTeacherStudentAddEmail = this.handleTeacherStudentAddEmail.bind(this);
         this.onBlurhandleTeacherStudentAddEmail = this.onBlurhandleTeacherStudentAddEmail.bind(this);
+        this.handleStudentAddProfilePic = this.handleStudentAddProfilePic.bind(this);
     }
 
     componentDidMount() {
@@ -620,12 +623,95 @@ export class TeacherDashboard extends React.Component {
         if(!this.handleSubmitTeacherStudentAddClientSideSubmitErrorsExist()){
             // no errors on the submit of teacher adding new student
             // check if student portal is required for this student
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    teacherStudentAddSubmitLoading: true,
+                }
+            }));
             if(this.state.teacherStudentComponent.teacherStudentAddStudentLoginRequired) {
                 console.log("Call backend API with requiring login portal for student");
             } else {
                 console.log("Call backend API not requiring login portal for student");
+                const addStudentAsTeacherWithoutLoginPortal = functions.httpsCallable('addStudentAsTeacherWithoutLoginPortal');
+                addStudentAsTeacherWithoutLoginPortal({
+                    uid: this.state.currentUserDoc.uid,
+                    photoURL: this.state.teacherStudentComponent.teacherStudentAddPhotoURL,
+                    currentGradeLevel: this.state.teacherStudentComponent.teacherStudentAddCurrentGrade,
+                    displayName: this.state.teacherStudentComponent.teacherStudentAddName,
+                }).then(result => {
+                    console.log('add sucessfully addStudentAsTeacherWithoutLoginPortal: ' + JSON.stringify(result));
+                    this.props.handleUpdateOnStudent();
+                    this.setState(prevState => ({
+                        teacherStudentComponent: {
+                            ...prevState.teacherStudentComponent,
+                            teacherStudentAddSubmitLoading: false,
+                        }
+                    }));
+                }).catch(err => {
+                    console.log(err)
+                });
             }
         }
+    }
+
+    uuidv4 = () => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    }
+            
+    handleStudentAddProfilePic = ({ onError, onSuccess, file }) => {
+        console.log("in handleStudentAddProfilePic");
+        const metadata = {
+            contentType: 'image/jpeg'
+        }
+        const storageRef = storage.ref();
+        let uniqueImageName = this.uuidv4();
+        const imageName = `${this.state.currentUserDoc.uid}/studentImages/${file.name}${uniqueImageName}`
+        const imgFile = storageRef.child(`images/${imageName}.png`);
+        try {
+            const uploadTask = imgFile.put(file, metadata);
+            const context = this;
+            uploadTask.on('state_changed', function(snapshot){
+                // Observe state change events such as progress, pause, and resume
+                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+                var progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                console.log('Upload is ' + progress + '% done');
+                switch (snapshot.state) {
+                  case firebase.storage.TaskState.PAUSED: // or 'paused'
+                    console.log('Upload is paused');
+                    break;
+                  case firebase.storage.TaskState.RUNNING: // or 'running'
+                    console.log('Upload is running');
+                    break;
+                }
+              }, function(error) {
+                // Handle unsuccessful uploads
+              }, function() {
+                // Handle successful uploads on complete
+                // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+                uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+                  console.log('File available at', downloadURL);
+                  context.setState(prevState => ({
+                        teacherStudentComponent: {
+                            ...prevState.teacherStudentComponent,
+                            teacherStudentAddPhotoURL: downloadURL,
+                        }
+                    }));
+                });
+            });
+            // onSuccess(null, image);
+        } catch(e) {
+            setTimeout(() => {
+                onError("error");
+            }, 0);
+        }
+        
+        setTimeout(() => {
+            onSuccess("ok");
+        }, 0);
     }
 
     handleCancelTeacherStudentAdd = (e) => {
@@ -644,6 +730,8 @@ export class TeacherDashboard extends React.Component {
                 teacherStudentAddStudentLoginRequired: false,
                 handleTeacherStudentAddEmailIsPristine: true,
                 teacherStudentAddEmailError: null,
+                teacherStudentAddSubmitLoading: false,
+                teacherStudentAddSubmitBackendError: false,
             }
         }));
     }
@@ -1093,6 +1181,7 @@ export class TeacherDashboard extends React.Component {
                         requireLoginPortalForStudent={this.requireLoginPortalForStudent}
                         handleTeacherStudentAddEmail={this.handleTeacherStudentAddEmail}
                         onBlurhandleTeacherStudentAddEmail={this.onBlurhandleTeacherStudentAddEmail}
+                        handleStudentAddProfilePic={this.handleStudentAddProfilePic}
                     />
                 </div>
             </React.Fragment>

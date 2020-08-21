@@ -180,6 +180,7 @@ export default class Nav extends React.Component {
                     requireLoginPortalForStudent={this.props.requireLoginPortalForStudent}
                     handleTeacherStudentAddEmail={this.props.handleTeacherStudentAddEmail}
                     onBlurhandleTeacherStudentAddEmail={this.props.onBlurhandleTeacherStudentAddEmail}
+                    handleStudentAddProfilePic={this.props.handleStudentAddProfilePic}
                    />
         }
     }
