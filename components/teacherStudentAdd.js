@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, Button, Form, Space, Input, Switch, Avatar, Upload } from 'antd';
+import { Modal, Button, Form, Space, Input, Switch, Avatar, Upload, Alert } from 'antd';
 
 import stylesheet from 'antd/dist/antd.min.css';
 import { UploadOutlined, UserOutlined } from '@ant-design/icons';
@@ -171,6 +171,16 @@ export default class TeacherStudentAdd extends React.Component {
         )
     }
 
+    addBackendError = () => {
+        if(this.props.teacherStudentComponent.handleSubmitTeacherStudentAddBackendError == true){
+            return(
+                <div>
+                    <Alert message="Something went wrong on our end" type="error" />
+                </div>
+            )
+        }
+    }
+
     render() {
         return (
             <React.Fragment>
@@ -191,6 +201,7 @@ export default class TeacherStudentAdd extends React.Component {
                     ]}
                     >
                         <Form name="student_information">
+                            {this.addBackendError()}
                             <Space/>
                             <Space/>
                             {this.nameComponent()}
