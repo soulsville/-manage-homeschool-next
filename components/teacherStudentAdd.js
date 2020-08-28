@@ -87,6 +87,46 @@ export default class TeacherStudentAdd extends React.Component {
         }
     }
 
+    passwordComponent = () => {
+        console.log("this.props.teacherStudentComponent.teacherStudentAddStudentLoginRequired");
+        console.log(this.props.teacherStudentComponent.teacherStudentAddStudentLoginRequired);
+        if(this.props.teacherStudentComponent.teacherStudentAddStudentLoginRequired === true) {
+            if(this.props.teacherStudentComponent.teacherStudentAddPasswordError) {
+                return(
+                    <div>
+                        <p>Password</p>
+                        <Form.Item
+                        validateStatus="error"
+                        help="Password is invalid please have it longer than 6 characters">
+                            <Input.Password size="medium" style={{ borderWidth: "0 0 2px" }} 
+                                onChange={(e) => this.props.handleTeacherStudentAddPassword(e)}
+                                value={this.props.teacherStudentComponent.teacherStudentAddPassword}
+                                onBlur={(e) => this.props.onBlurhandleTeacherStudentAddPassword(e)}
+                            />
+                        </Form.Item>
+                    </div>
+                )
+            } else {
+                return(
+                    <div>
+                        <p>Password</p>
+                        <Form.Item>
+                            <Input.Password size="medium" style={{ borderWidth: "0 0 2px" }} 
+                                onChange={(e) => this.props.handleTeacherStudentAddPassword(e)}
+                                value={this.props.teacherStudentComponent.teacherStudentAddPassword}
+                                onBlur={(e) => this.props.onBlurhandleTeacherStudentAddPassword(e)}
+                            />
+                        </Form.Item>
+                    </div>
+                )
+            }
+        } else {
+            return(
+                null
+            )
+        }
+    }
+    
     currentGradeComponent = () => {
         if(this.props.teacherStudentComponent.teacherStudentAddCurrentGradeError) {
             return(
@@ -156,6 +196,7 @@ export default class TeacherStudentAdd extends React.Component {
                             {this.nameComponent()}
                             {this.currentGradeComponent()}
                             {this.emailComponent()}
+                            {this.passwordComponent()}
                             Enable Student Portal
                             {this.showRequireLoginToggleComponent()}
                         </Form>  

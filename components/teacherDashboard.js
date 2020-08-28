@@ -58,6 +58,9 @@ export class TeacherDashboard extends React.Component {
                 teacherStudentAddEmail: "",
                 teacherStudentAddEmailError: null,
                 handleTeacherStudentAddEmailIsPristine: true,
+                teacherStudentAddPassword: "",
+                handleTeacherStudentAddPasswordIsPristine: true,
+                teacherStudentAddPasswordError: null,
                 teacherStudentAddPhotoURL: "",
                 teacherStudentAddCurrentGrade: "",
                 teacherStudentAddCurrentGradeError: false,
@@ -95,6 +98,8 @@ export class TeacherDashboard extends React.Component {
         this.requireLoginPortalForStudent = this.requireLoginPortalForStudent.bind(this);
         this.handleTeacherStudentAddEmail = this.handleTeacherStudentAddEmail.bind(this);
         this.onBlurhandleTeacherStudentAddEmail = this.onBlurhandleTeacherStudentAddEmail.bind(this);
+        this.handleTeacherStudentAddPassword = this.handleTeacherStudentAddPassword.bind(this);
+        this.onBlurhandleTeacherStudentAddPassword = this.onBlurhandleTeacherStudentAddPassword.bind(this);
         this.handleStudentAddProfilePic = this.handleStudentAddProfilePic.bind(this);
     }
 
@@ -514,6 +519,60 @@ export class TeacherDashboard extends React.Component {
         // check if all the state values required actually exist if not set the appropropriate errors
         if(this.state.teacherStudentComponent.teacherStudentAddStudentLoginRequired) {
             if(!this.state.teacherStudentComponent.teacherStudentAddEmail &&
+                !this.state.teacherStudentComponent.teacherStudentAddName &&
+                !this.state.teacherStudentComponent.teacherStudentAddCurrentGrade &&
+                !this.state.teacherStudentComponent.teacherStudentAddPassword) {
+                 this.setState(prevState => ({
+                     teacherStudentComponent: {
+                         ...prevState.teacherStudentComponent,
+                         teacherStudentAddEmailError: true,
+                         teacherStudentAddPasswordError: true,
+                         handleTeacherStudentAddPasswordIsPristine: false,
+                         handleTeacherStudentAddEmailIsPristine: false,
+                         teacherStudentAddNameError: true,
+                         teacherStudentAddCurrentGradeError: true,
+
+                     }
+                 }));
+                 return true;
+            } else if(!this.state.teacherStudentComponent.teacherStudentAddName &&
+                    !this.state.teacherStudentComponent.teacherStudentAddCurrentGrade &&
+                    !this.state.teacherStudentComponent.teacherStudentAddPassword) {
+                    this.setState(prevState => ({
+                        teacherStudentComponent: {
+                            ...prevState.teacherStudentComponent,
+                            teacherStudentAddPasswordError: true,
+                            handleTeacherStudentAddPasswordIsPristine: false,
+                            teacherStudentAddNameError: true,
+                            teacherStudentAddCurrentGradeError: true,
+
+                        }
+                    }));
+                    return true;
+            } else if(!this.state.teacherStudentComponent.teacherStudentAddName &&
+                !this.state.teacherStudentComponent.teacherStudentAddPassword) {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        teacherStudentAddPasswordError: true,
+                        handleTeacherStudentAddPasswordIsPristine: false,
+                        teacherStudentAddNameError: true,
+                    }
+                }));
+                return true;
+            } else if(!this.state.teacherStudentComponent.teacherStudentAddCurrentGrade &&
+                      !this.state.teacherStudentComponent.teacherStudentAddPassword) {
+                        this.setState(prevState => ({
+                            teacherStudentComponent: {
+                                ...prevState.teacherStudentComponent,
+                                teacherStudentAddPasswordError: true,
+                                handleTeacherStudentAddPasswordIsPristine: false,
+                                teacherStudentAddCurrentGradeError: true,
+
+                            }
+                        }));
+                        return true;
+            } else if(!this.state.teacherStudentComponent.teacherStudentAddEmail &&
                !this.state.teacherStudentComponent.teacherStudentAddName &&
                !this.state.teacherStudentComponent.teacherStudentAddCurrentGrade) {
                 this.setState(prevState => ({
@@ -631,6 +690,26 @@ export class TeacherDashboard extends React.Component {
             }));
             if(this.state.teacherStudentComponent.teacherStudentAddStudentLoginRequired) {
                 console.log("Call backend API with requiring login portal for student");
+                const addStudentAsTeacherWithLoginPortal = functions.httpsCallable('addStudentAsTeacherWithLoginPortal');
+                addStudentAsTeacherWithLoginPortal({
+                    uid: this.state.currentUserDoc.uid,
+                    photoURL: this.state.teacherStudentComponent.teacherStudentAddPhotoURL,
+                    currentGradeLevel: this.state.teacherStudentComponent.teacherStudentAddCurrentGrade,
+                    displayName: this.state.teacherStudentComponent.teacherStudentAddName,
+                    email: this.state.teacherStudentComponent.teacherStudentAddEmail,
+                    password: this.state.teacherStudentComponent.teacherStudentAddPassword,
+                }).then(result => {
+                    console.log('add sucessfully addStudentAsTeacherWithLoginPortal: ' + JSON.stringify(result));
+                    this.props.handleUpdateOnStudent();
+                    this.setState(prevState => ({
+                        teacherStudentComponent: {
+                            ...prevState.teacherStudentComponent,
+                            teacherStudentAddSubmitLoading: false,
+                        }
+                    }));
+                }).catch(err => {
+                    console.log(err)
+                });
             } else {
                 console.log("Call backend API not requiring login portal for student");
                 const addStudentAsTeacherWithoutLoginPortal = functions.httpsCallable('addStudentAsTeacherWithoutLoginPortal');
@@ -873,6 +952,64 @@ export class TeacherDashboard extends React.Component {
                     ...prevState.teacherStudentComponent,
                     teacherStudentAddEmailError: true,
                     handleTeacherStudentAddEmailIsPristine: false,
+                }
+            }));
+        }
+    }
+
+    validatePassword = (value) => {
+        if(value.length >= 6){
+            return true
+        } else {
+            return false
+        }
+    }
+
+    handleTeacherStudentAddPassword = (e) => {
+        console.log("in handleTeacherStudentAddPassword");
+        console.log("this.state.handleTeacherStudentAddPassword ");
+        console.log(this.state.handleTeacherStudentAddPasswordIsPristine);
+        e.preventDefault();
+        const target = e.target;
+        const value = target.value;
+        if(this.state.teacherStudentComponent.handleTeacherStudentAddPasswordIsPristine){
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    teacherStudentAddPassword: value,
+                }
+            }));
+        } else {
+            if(this.validatePassword(value)) {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        teacherStudentAddPassword: value,
+                        teacherStudentAddPasswordError: null,
+                    }
+                }));
+            } else {
+                this.setState(prevState => ({
+                    teacherStudentComponent: {
+                        ...prevState.teacherStudentComponent,
+                        teacherStudentAddPassword: value,
+                        teacherStudentAddPasswordError: true,
+                    }
+                }));
+            }
+        }
+    }
+
+    onBlurhandleTeacherStudentAddPassword = (e) => {
+        console.log("in onBlurhandleTeacherStudentAddPassword ");
+        console.log("this.state.teacherStudentComponent.teacherStudentAddPassword " + this.state.teacherStudentComponent.teacherStudentAddPassword);
+        if(this.state)
+        if(!this.validatePassword(this.state.teacherStudentComponent.teacherStudentAddPassword)) {
+            this.setState(prevState => ({
+                teacherStudentComponent: {
+                    ...prevState.teacherStudentComponent,
+                    teacherStudentAddPasswordError: true,
+                    handleTeacherStudentAddPasswordIsPristine: false,
                 }
             }));
         }
@@ -1182,6 +1319,8 @@ export class TeacherDashboard extends React.Component {
                         handleTeacherStudentAddEmail={this.handleTeacherStudentAddEmail}
                         onBlurhandleTeacherStudentAddEmail={this.onBlurhandleTeacherStudentAddEmail}
                         handleStudentAddProfilePic={this.handleStudentAddProfilePic}
+                        handleTeacherStudentAddPassword={this.handleTeacherStudentAddPassword}
+                        onBlurhandleTeacherStudentAddPassword={this.onBlurhandleTeacherStudentAddPassword}
                     />
                 </div>
             </React.Fragment>
