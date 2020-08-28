@@ -67,6 +67,7 @@ export class TeacherDashboard extends React.Component {
                 teacherStudentAddStudentLoginRequired: false,
                 teacherStudentAddSubmitLoading: false,
                 teacherStudentAddSubmitBackendError: false,
+                handleSubmitTeacherStudentAddBackendError: false,
             },
         }
         this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -708,7 +709,14 @@ export class TeacherDashboard extends React.Component {
                         }
                     }));
                 }).catch(err => {
-                    console.log(err)
+                    console.log(err);
+                    this.setState(prevState => ({
+                        teacherStudentComponent: {
+                            ...prevState.teacherStudentComponent,
+                            teacherStudentAddSubmitLoading: false,
+                            handleSubmitTeacherStudentAddBackendError: true,
+                        }
+                    }));
                 });
             } else {
                 console.log("Call backend API not requiring login portal for student");
@@ -729,6 +737,13 @@ export class TeacherDashboard extends React.Component {
                     }));
                 }).catch(err => {
                     console.log(err)
+                    this.setState(prevState => ({
+                        teacherStudentComponent: {
+                            ...prevState.teacherStudentComponent,
+                            teacherStudentAddSubmitLoading: false,
+                            handleSubmitTeacherStudentAddBackendError: true,
+                        }
+                    }));
                 });
             }
         }
