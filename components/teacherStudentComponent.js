@@ -59,34 +59,6 @@ export default class TeacherStudentComponent extends React.Component {
                     teacherStudentComponentHandleTeacherStudentClick={this.props.teacherStudentComponentHandleTeacherStudentClick}
                     teacherStudentRef={this.props.teacherStudentRef}
                    />
-            const antIcon = <LoadingOutlined style={{ fontSize: 20 }} spin />;
-            return(
-                <List style={{position: "absolute"}}>
-                {
-                    this.props.teacherStudentRef.data.map(function(d, idx){
-                        return(
-                            <List.Item key={d.uid} style={{float: "left", position: "absolute"}}
-                            actions={[
-                                <a key="list-loadmore-more" onClick={() => context.props.teacherStudentComponentHandleTeacherStudentClick(d)}>
-                                    {context.props.teacherStudentComponent.individualStudentEditLoading ?
-                                        <Spin indicator={antIcon} style={{ float: 'right' }} />
-                                    :
-                                        <div>Edit</div>
-                                    }
-                                </a>
-                            ]}
-                            >
-                                <List.Item.Meta
-                                    avatar={d.photoURL ? <Avatar src={d.photoURL} /> : <Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
-                                    title={d.displayName ? d.displayName : "No name for student"}
-                                    description={d.email ? d.email : "No email set for student"}
-                                />
-                            </List.Item>
-                        )
-                    })
-                }
-                </List>
-            )
         } else if (this.props.teacherStudentComponent.individualStudentEditClicked == true && !this.props.teacherStudentComponent.teacherStudentComponentAddStudentsClicked) {
             return <TeacherEditStudentComponent
                     teacherStudentRef={this.props.teacherStudentRef}

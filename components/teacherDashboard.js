@@ -17,6 +17,7 @@ export class TeacherDashboard extends React.Component {
             studentClicked: false,
             attendanceOptionClicked: false,
             studentsOptionClicked: false,
+            classesOptionClicked: false,
             attendanceComponent: {
                 clientSideValidationErrors:{
                     rangePickerAttendanceValidationError: null,
@@ -69,6 +70,12 @@ export class TeacherDashboard extends React.Component {
                 teacherStudentAddSubmitBackendError: false,
                 handleSubmitTeacherStudentAddBackendError: false,
             },
+            teacherClassComponent: {
+                individualStudentEditLoading: false,
+                individualStudentAllClasses: null,
+                individualStudentClassesClicked: false,
+                individualStudentAssignmentsLoading: false,
+            },
         }
         this.handleMenuClick = this.handleMenuClick.bind(this);
         this.studentAttendanceSubmitClicked = this.studentAttendanceSubmitClicked.bind(this);
@@ -102,6 +109,8 @@ export class TeacherDashboard extends React.Component {
         this.handleTeacherStudentAddPassword = this.handleTeacherStudentAddPassword.bind(this);
         this.onBlurhandleTeacherStudentAddPassword = this.onBlurhandleTeacherStudentAddPassword.bind(this);
         this.handleStudentAddProfilePic = this.handleStudentAddProfilePic.bind(this);
+        this.teacherClassComponentHandleTeacherStudentClick = this.teacherClassComponentHandleTeacherStudentClick.bind(this);
+        this.teacherClassComponentHandleTeacherAttendanceClick = this.teacherClassComponentHandleTeacherAttendanceClick.bind(this);
     }
 
     componentDidMount() {
@@ -113,6 +122,41 @@ export class TeacherDashboard extends React.Component {
 
     }
 
+    /* teacherClassComponent */
+    // classes -> get all the classes for particular student (have a way to add more classes, etc here) -> get all assignments for this class 
+    teacherClassComponentHandleTeacherStudentClick = (e) => {
+        console.log("in teacherClassComponentHandleTeacherStudentClick..");
+        console.log(e);
+        console.log("studentUid: " + e.uid);
+        console.log("studentUid: " + e.currentGradeLevel);
+        this.setState(prevState => ({
+            teacherClassComponent: {
+                ...prevState.teacherClassComponent,
+                individualStudentEditLoading: true,
+            }
+        }));
+        // get classes of this particular user
+        const getStudentClassesCollectionAsTeacher = functions.httpsCallable('getStudentClassesCollectionAsTeacher');
+        getStudentClassesCollectionAsTeacher({
+            uid: this.state.currentUserDoc.uid,
+            currentGradeLevel: e.currentGradeLevel,
+            studentUid: e.uid,
+        }).then(result => {
+            console.log('result: ' + JSON.stringify(result));
+            this.setState(prevState => ({
+                teacherClassComponent: {
+                    ...prevState.teacherClassComponent,
+                    individualStudentEditLoading: false,
+                    individualStudentAllClasses: result,
+                    individualStudentClassesClicked: true,
+                }
+            }));
+        });
+    }
+    teacherClassComponentHandleTeacherAttendanceClick = (e) => {
+        // TODO: Get all assignments under this particular class
+    }
+    /* End */
     /* individualStudentTeacherEdit component functions */
     /* Email */
     validateEmail = (email) => {
@@ -812,7 +856,6 @@ export class TeacherDashboard extends React.Component {
         this.setState(prevState => ({
             teacherStudentComponent: {
                 ...prevState.teacherStudentComponent,
-                teacherStudentAddModalVisible: false,
                 teacherStudentComponentAddStudentsClicked: false,
                 teacherStudentAddModalVisible: true,
                 teacherStudentAddName: "",
@@ -1263,11 +1306,20 @@ export class TeacherDashboard extends React.Component {
             console.log("Pressed student attendance");
             this.setState({
                 attendanceOptionClicked: true,
+                studentsOptionClicked: false,
+                classesOptionClicked: false,
             });
         } else if (parseInt(index) === -3) {
             this.setState({
                 attendanceOptionClicked: false,
                 studentsOptionClicked: true,
+                classesOptionClicked: false,
+            });
+        } else if (parseInt(index) === -4) {
+            this.setState({
+                attendanceOptionClicked: false,
+                studentsOptionClicked: false,
+                classesOptionClicked: true,
             });
         }
         else {
@@ -1300,6 +1352,7 @@ export class TeacherDashboard extends React.Component {
                         attendanceOptionClicked={this.state.attendanceOptionClicked}
                         attendanceComponent={this.state.attendanceComponent}
                         studentsOptionClicked={this.state.studentsOptionClicked}
+                        classesOptionClicked={this.state.classesOptionClicked}
                         teacherStudentComponent={this.state.teacherStudentComponent}
                         teacherStudentRef={this.props.teacherStudentRef}
                         teacherStudentComponentHandleTeacherStudentClick={this.teacherStudentComponentHandleTeacherStudentClick}
@@ -1336,6 +1389,8 @@ export class TeacherDashboard extends React.Component {
                         handleStudentAddProfilePic={this.handleStudentAddProfilePic}
                         handleTeacherStudentAddPassword={this.handleTeacherStudentAddPassword}
                         onBlurhandleTeacherStudentAddPassword={this.onBlurhandleTeacherStudentAddPassword}
+                        teacherClassComponent={this.state.teacherClassComponent}
+                        teacherClassComponentHandleTeacherStudentClick={this.teacherClassComponentHandleTeacherStudentClick}
                     />
                 </div>
             </React.Fragment>
