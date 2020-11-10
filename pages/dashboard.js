@@ -32,18 +32,23 @@ class Dashboard extends React.Component {
       let docRef = db.collection("users").doc(this.state.authUser.uid);
       let currentComponent = this;
       docRef.get().then((doc) => {
+        console.log("innn docRef.get()...");
         if(doc.exists) {
+          console.log("innn doc exists...");
           // check if the users uid isNewUser
-          console.log("Document data:", doc.data());
-          if(doc.data().isNewUser && doc.data().userType === "teacher") {
-            console.log("newTeacherUserFlow interview questions");
-            currentComponent.setState({
-              newTeacherUserFlow: true,
-            });
-          } else if(doc.data().userType == "teacher"){
-            // TODO: get the teacher doc here instad of the users doc
+          // console.log("Document data:", doc.data());
+          // if(doc.data().isNewUser && doc.data().userType === "teacher") {
+          //   console.log("newTeacherUserFlow interview questions");
+          //   currentComponent.setState({
+          //     newTeacherUserFlow: true,
+          //   });
+          // } else
+          if(doc.data().userType == "teacher"){
+            // TODO: handle the below when it fails the teacher doc doesn't exist for whatever reason handle that
             let teacherRef = db.collection("teachers").doc(this.state.authUser.uid);
+            console.log("teacherRef: " + teacherRef);
             teacherRef.get().then((teacherDoc) => {
+              console.log(("teacherDoc.data()" + teacherDoc.data()));
               const getStudentCollectionDocumentsAsTeacher = functions.httpsCallable('getStudentCollectionDocumentsAsTeacher');
               getStudentCollectionDocumentsAsTeacher({
                     uid: this.state.authUser.uid,
@@ -91,8 +96,10 @@ class Dashboard extends React.Component {
         Router.push('/teacher_setup');
       } else if(this.state.teacherDashboard == true) {
         console.log("made it to teacher dashboard conditional");
+        console.log(this.state.currentUserDoc);
         return <TeacherDashboard 
-                authUser={this.state.authUser} currentUserDoc={this.state.currentUserDoc} 
+                authUser={this.state.authUser}
+                currentUserDoc={this.state.currentUserDoc}
                 teacherStudentRef={this.state.teacherStudentRef}
                 handleUpdateOnStudent={this.handleUpdateOnStudent}
                 />

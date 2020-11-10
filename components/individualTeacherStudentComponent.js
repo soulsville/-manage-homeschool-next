@@ -33,7 +33,7 @@ export default class IndividualTeacherStudentComponent extends React.Component {
             renderItem={item => (
                 <List.Item
                     actions={[
-                        <a key={item} onClick={() => context.teacherClassComponentHandleTeacherAttendanceClick(item)}>
+                        <a key={item} onClick={() => context.teacherClassComponentHandleIndividualTeacherAssignmentsClick(item)}>
                         {context.teacherClassComponent.individualStudentAssignmentsLoading ?
                             <Spin indicator={antIcon} style={{ float: 'right' }} />
                         :

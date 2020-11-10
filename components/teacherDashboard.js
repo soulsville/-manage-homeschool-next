@@ -75,6 +75,13 @@ export class TeacherDashboard extends React.Component {
                 individualStudentAllClasses: null,
                 individualStudentClassesClicked: false,
                 individualStudentAssignmentsLoading: false,
+                individualStudentClickedInfo: null,
+                individualStudentAllAssignments: null,
+                individualStudentAssignmentsClicked: false,
+                individualStudentSpecificClassSelected: null,
+                handleGradebookSettingModalShow: false,
+                setGradeBookSettings: false,
+                gradeBookSettingsValue: null,
             },
         }
         this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -110,7 +117,11 @@ export class TeacherDashboard extends React.Component {
         this.onBlurhandleTeacherStudentAddPassword = this.onBlurhandleTeacherStudentAddPassword.bind(this);
         this.handleStudentAddProfilePic = this.handleStudentAddProfilePic.bind(this);
         this.teacherClassComponentHandleTeacherStudentClick = this.teacherClassComponentHandleTeacherStudentClick.bind(this);
-        this.teacherClassComponentHandleTeacherAttendanceClick = this.teacherClassComponentHandleTeacherAttendanceClick.bind(this);
+        this.teacherClassComponentHandleIndividualTeacherAssignmentsClick = this.teacherClassComponentHandleIndividualTeacherAssignmentsClick.bind(this);
+        this.handleGradebookSettingClick = this.handleGradebookSettingClick.bind(this);
+        this.handleGradeBookSettingsChange = this.handleGradeBookSettingsChange.bind(this);
+        this.handleGradeBookSettingsBack = this.handleGradeBookSettingsBack.bind(this);
+        this.handleGradeBookSettingsSubmit = this.handleGradeBookSettingsSubmit.bind(this);
     }
 
     componentDidMount() {
@@ -149,12 +160,92 @@ export class TeacherDashboard extends React.Component {
                     individualStudentEditLoading: false,
                     individualStudentAllClasses: result,
                     individualStudentClassesClicked: true,
+                    individualStudentClickedInfo: e,
                 }
             }));
         });
     }
-    teacherClassComponentHandleTeacherAttendanceClick = (e) => {
+    teacherClassComponentHandleIndividualTeacherAssignmentsClick = (e) => {
         // TODO: Get all assignments under this particular class
+        console.log("in teacherClassComponentHandleIndividualTeacherAssignmentsClick");
+        console.log(e);
+        this.setState(prevState => ({
+            teacherClassComponent: {
+                ...prevState.teacherClassComponent,
+                individualStudentAssignmentsLoading: true,
+            }
+        }));
+        // get classes of this particular user
+        const getStudentAssignmentsInParticularClassAsTeacher = functions.httpsCallable('getStudentAssignmentsInParticularClassAsTeacher');
+        getStudentAssignmentsInParticularClassAsTeacher({
+            uid: this.state.currentUserDoc.uid,
+            currentGradeLevel: this.state.teacherClassComponent.individualStudentClickedInfo.currentGradeLevel,
+            studentUid: this.state.teacherClassComponent.individualStudentClickedInfo.uid,
+            studentClass: e,
+        }).then(result => {
+            console.log('result: ' + JSON.stringify(result));
+            this.setState(prevState => ({
+                teacherClassComponent: {
+                    ...prevState.teacherClassComponent,
+                    individualStudentAssignmentsLoading: false,
+                    individualStudentAllAssignments: result,
+                    individualStudentClassesClicked: false,
+                    individualStudentAssignmentsClicked: true,
+                    individualStudentSpecificClassSelected: e,
+                }
+            }));
+        });
+        // const updateStudentEmailPasswordAsTeacher = functions.httpsCallable('updateStudentEmailPasswordAsTeacher');
+        // updateStudentEmailPasswordAsTeacher({
+        //     uid: this.state.currentUserDoc.uid,
+        //     studentUid: ,
+        //     requireStudentEmailUpdate: requireStudentEmailUpdate,
+        //     requireStudentPasswordUpdate: requireStudentPasswordUpdate,
+        //     email: email,
+        //     password: this.state.teacherStudentComponent.individualStudentTeacherEditPassword,
+        // }).then(result => {
+        //     console.log('update sucessful for email or password as teacher' + result);
+        // }).catch(err => {
+        //     console.log(err)
+        // })
+    }
+    handleGradebookSettingClick = (e) => {
+        console.log("in handleGradebookSettingClick");
+        this.setState(prevState => ({
+            teacherClassComponent: {
+                ...prevState.teacherClassComponent,
+                handleGradebookSettingModalShow: true,
+            }
+        }));
+    }
+
+    handleGradeBookSettingsChange = (e) => {
+        console.log('in handleGradeBookSettingsChange');
+        console.log(e);
+        this.setState(prevState => ({
+            teacherClassComponent: {
+                ...prevState.teacherClassComponent,
+                setGradeBookSettings: true,
+                gradeBookSettingsValue: e,
+            }
+        }));
+    }
+
+    handleGradeBookSettingsBack = (e) => {
+        console.log('in handleGradeBookSettingsBack');
+        this.setState(prevState => ({
+            teacherClassComponent: {
+                ...prevState.teacherClassComponent,
+                handleGradebookSettingModalShow: false,
+                setGradeBookSettings: false,
+                gradeBookSettingsValue: null,
+            }
+        }));
+    }
+
+    handleGradeBookSettingsSubmit = (e) => {
+        console.log("in handleGradeBookSettingsSubmit");
+        console.log("handle submission of gradeBookSettings now");
     }
     /* End */
     /* individualStudentTeacherEdit component functions */
@@ -1391,6 +1482,11 @@ export class TeacherDashboard extends React.Component {
                         onBlurhandleTeacherStudentAddPassword={this.onBlurhandleTeacherStudentAddPassword}
                         teacherClassComponent={this.state.teacherClassComponent}
                         teacherClassComponentHandleTeacherStudentClick={this.teacherClassComponentHandleTeacherStudentClick}
+                        teacherClassComponentHandleIndividualTeacherAssignmentsClick={this.teacherClassComponentHandleIndividualTeacherAssignmentsClick}
+                        handleGradebookSettingClick={this.handleGradebookSettingClick}
+                        handleGradeBookSettingsChange={this.handleGradeBookSettingsChange}
+                        handleGradeBookSettingsBack={this.handleGradeBookSettingsBack}
+                        handleGradeBookSettingsSubmit={this.handleGradeBookSettingsSubmit}
                     />
                 </div>
             </React.Fragment>

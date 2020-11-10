@@ -95,6 +95,11 @@ export default class Nav extends React.Component {
                     teacherStudentRef={this.props.teacherStudentRef}
                     teacherClassComponent={this.props.teacherClassComponent}
                     teacherClassComponentHandleTeacherStudentClick={this.props.teacherClassComponentHandleTeacherStudentClick}
+                    teacherClassComponentHandleIndividualTeacherAssignmentsClick={this.props.teacherClassComponentHandleIndividualTeacherAssignmentsClick}
+                    handleGradebookSettingClick={this.props.handleGradebookSettingClick}
+                    handleGradeBookSettingsChange={this.props.handleGradeBookSettingsChange}
+                    handleGradeBookSettingsBack={this.props.handleGradeBookSettingsBack}
+                    handleGradeBookSettingsSubmit={this.props.handleGradeBookSettingsSubmit}
                    />
         }
     }

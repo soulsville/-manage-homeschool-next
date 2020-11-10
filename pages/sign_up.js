@@ -247,6 +247,7 @@ class SignUp extends React.Component {
         "isNewUser": firebaseUser.additionalUserInfo.isNewUser,
         "userType": "teacher"
       }
+      // TODO: add the users doc but also add the teacher doc here on signup
       db.collection("users").doc(firebaseUser.user.uid).set(userDataCollection).then(() => {
         const addAdminRole = functions.httpsCallable('addAdminRole');
         addAdminRole({ uid: firebaseUser.user.uid }).then(results => {
