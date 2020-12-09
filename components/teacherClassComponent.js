@@ -65,7 +65,7 @@ export default class TeacherClass extends React.Component {
                                 <Button key="back" onClick={(e) => this.props.handleGradeBookSettingsBack(e)}>
                                     Return
                                 </Button>,
-                                <Button key="submit" type="primary" loading={this.props.loadingModal} onClick={(e) => this.props.handleGradeBookSettingsSubmit(e)}>
+                                <Button key="submit" type="primary" loading={this.props.teacherClassComponent.gradeBookSettingsSubmitLoading} onClick={(e) => this.props.handleGradeBookSettingsSubmit(e)}>
                                     Submit
                                 </Button>,
                             ]}
@@ -80,12 +80,6 @@ export default class TeacherClass extends React.Component {
                             </Form>
                         </Modal>
                     </div>
-                )
-            } else {
-                return(
-                    <Button type="primary" icon={<FolderAddTwoTone />} size="default" style={{marginLeft: 40}} onClick={this.props.handleGradebookSettingClick}>
-                        Gradebook Settings
-                    </Button>
                 )
             }
         } else if(this.props.teacherClassComponent.individualStudentClassesClicked === false && this.props.teacherClassComponent.individualStudentAssignmentsClicked === true){
@@ -113,6 +107,10 @@ export default class TeacherClass extends React.Component {
                     teacherClassComponent={this.props.teacherClassComponent}
                     teacherClassComponentHandleTeacherStudentClick={this.props.teacherClassComponentHandleTeacherStudentClick}
                     teacherStudentRef={this.props.teacherStudentRef}
+                    handleGradeBookSettingsChange={this.props.handleGradeBookSettingsChange}
+                    handleGradeBookSettingsBack={this.props.handleGradeBookSettingsBack}
+                    handleGradeBookSettingsSubmit={this.props.handleGradeBookSettingsSubmit}
+                    handleGradebookSettingClick={this.props.handleGradebookSettingClick}
                     />
         } else if(this.props.teacherClassComponent.individualStudentClassesClicked === false && this.props.teacherClassComponent.individualStudentAssignmentsClicked === true){
             return <IndividualTeacherStudentAssignments

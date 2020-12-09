@@ -82,6 +82,9 @@ export class TeacherDashboard extends React.Component {
                 handleGradebookSettingModalShow: false,
                 setGradeBookSettings: false,
                 gradeBookSettingsValue: null,
+                gradeBookStudentEditClicked: false,
+                individualGradeBookSettingUser: null,
+                gradeBookSettingsSubmitLoading: false,
             },
         }
         this.handleMenuClick = this.handleMenuClick.bind(this);
@@ -211,10 +214,14 @@ export class TeacherDashboard extends React.Component {
     }
     handleGradebookSettingClick = (e) => {
         console.log("in handleGradebookSettingClick");
+        console.log(e);
         this.setState(prevState => ({
             teacherClassComponent: {
                 ...prevState.teacherClassComponent,
                 handleGradebookSettingModalShow: true,
+                gradeBookSettingsValue: null,
+                individualGradeBookSettingUser: e,
+                gradeBookSettingsSubmitLoading: false,
             }
         }));
     }
@@ -239,6 +246,8 @@ export class TeacherDashboard extends React.Component {
                 handleGradebookSettingModalShow: false,
                 setGradeBookSettings: false,
                 gradeBookSettingsValue: null,
+                individualGradeBookSettingUser: null,
+                gradeBookSettingsSubmitLoading: false,
             }
         }));
     }
@@ -246,6 +255,33 @@ export class TeacherDashboard extends React.Component {
     handleGradeBookSettingsSubmit = (e) => {
         console.log("in handleGradeBookSettingsSubmit");
         console.log("handle submission of gradeBookSettings now");
+        console.log(this.state.teacherClassComponent.individualGradeBookSettingUser);
+        console.log(this.state.teacherClassComponent.gradeBookSettingsValue)
+        this.setState(prevState => ({
+            teacherClassComponent: {
+                ...prevState.teacherClassComponent,
+                gradeBookSettingsSubmitLoading: true,
+            }
+        }));
+        if(this.state.teacherClassComponent.gradeBookSettingsValue && this.state.teacherClassComponent.individualGradeBookSettingUser){
+            const setGradeBookSettingsAsTeacher = functions.httpsCallable('setGradeBookSettingsAsTeacher');
+            setGradeBookSettingsAsTeacher({
+                uid: this.state.currentUserDoc.uid,
+                studentUid: this.state.teacherClassComponent.individualGradeBookSettingUser.uid,
+                currentGradeLevel: this.state.teacherClassComponent.individualGradeBookSettingUser.currentGradeLevel,
+                gradeType:this.state.teacherClassComponent.gradeBookSettingsValue,
+            }).then(result => {
+                console.log(result);
+                this.setState(prevState => ({
+                    teacherClassComponent: {
+                        ...prevState.teacherClassComponent,
+                        gradeBookSettingsSubmitLoading: false,
+                    }
+                }));
+            }).catch(err => {
+                console.log(err);
+            });
+        }
     }
     /* End */
     /* individualStudentTeacherEdit component functions */

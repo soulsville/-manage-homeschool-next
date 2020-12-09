@@ -39,7 +39,15 @@ export default class TeacherClassShowStudentsComponent extends React.Component {
                         :
                             <div>Classes</div>
                         }
-                    </a>
+                        </a>
+                    ,
+                        <a key={item.uid} onClick={() => context.handleGradebookSettingClick(item)}>
+                            {context.teacherClassComponent.gradeBookStudentEditClicked ?
+                                <Spin indicator={antIcon} style={{ float: 'right' }} />
+                                :
+                                <div>Student Gradebook Settings</div>
+                            }
+                        </a>
                     ]}
                 >
                 <List.Item.Meta
